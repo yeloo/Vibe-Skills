@@ -92,6 +92,18 @@ Otherwise, present probe results and recommended grade via the runtime-neutral u
 | Debug | systematic-debugging | systematic-debugging + parallel investigation | Codex native debug team |
 | Research | sc:research or deep-research | deep-research | Codex native research team |
 
+### Pack Router Overlay (v2.1)
+
+After grade and task-type are decided, VCO applies a pack overlay:
+
+1. Load pack definitions from `config/pack-manifest.json`
+2. Score candidate packs using `config/router-thresholds.json`
+3. Select skill candidates from the winning pack
+4. Resolve legacy names via `config/skill-alias-map.json`
+5. If confidence is below threshold, fallback to the legacy Grade×Type matrix above
+
+Pack routing MUST respect grade/task boundaries and Rule 3 command priority.
+
 Specialized agents available at ANY grade (exempt from agent boundary rule):
 - build-error-resolver: build-specific errors (compat alias: local `error-resolver`)
 - security-reviewer: security audits
@@ -179,6 +191,10 @@ Detect availability AFTER routing selects a tool, BEFORE invoking:
 - build-error-resolver resolution:
   - Try `everything-claude-code:build-error-resolver`
   - If unavailable, use local `build-error-resolver` alias skill (delegates to `error-resolver`)
+- Pack router inputs:
+  - `config/pack-manifest.json`
+  - `config/router-thresholds.json`
+  - `config/skill-alias-map.json`
 - See references/fallback-chains.md for complete fallback paths
 
 ## Protocols (on-demand loading)
@@ -200,6 +216,7 @@ Detect availability AFTER routing selects a tool, BEFORE invoking:
 | tool-registry.md | Tool capabilities + verification status |
 | team-templates.md | 7 predefined team compositions |
 | extending-vco.md | Guide for adding/updating tools |
+| docs/skills-consolidation-roadmap.md | Pack consolidation phases and gates |
 | changelog.md | Version history |
 | index.md | Navigation index |
 
@@ -222,7 +239,7 @@ Detect availability AFTER routing selects a tool, BEFORE invoking:
 
 ## Maintenance
 
-- Version: 2.0.9
+- Version: 2.2.0
 - Updated: 2026-02-24
 - Sources: Source code analysis of 6 plugins (2026-02-18)
 - Changelog: references/changelog.md

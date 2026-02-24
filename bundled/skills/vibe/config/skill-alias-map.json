@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "updated": "2026-02-24",
+  "aliases": {},
+  "notes": [
+    "Alias targets must resolve to canonical top-level skill names.",
+    "Batch E final cleanup completed: deprecated aliases removed; canonical skill names only."
+  ]
+}

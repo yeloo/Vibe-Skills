@@ -43,6 +43,11 @@ Fallback provision: 当某 grade 的主 agent 系统不可用时，严格按 ref
 - Ralph-loop Stop: only activates when user explicitly starts /ralph-loop
 - Codex native team tools are runtime primitives (no plugin hooks)
 
+**Pack router boundary:**
+- Pack selection is an overlay after Grade×TaskType classification.
+- Pack overlay cannot violate grade boundaries (M/L/XL) or task boundaries.
+- If pack confidence is below threshold, fallback to the legacy matrix path.
+
 ## Rule 2: Memory Division
 
 Each memory system has a specific role. Do not cross boundaries.

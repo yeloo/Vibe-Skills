@@ -48,6 +48,22 @@ If the new tool provides unique capabilities, update the relevant protocol:
 ### Step 7: Update Fallback Chains
 Add fallback entries to references/fallback-chains.md
 
+## Extending the Pack Router
+
+When adding or modifying skill packs:
+
+1. Update `config/pack-manifest.json`
+   - Keep grade and task boundaries explicit
+   - Keep candidate lists short and deterministic
+2. Update `config/skill-alias-map.json`
+   - Add compatibility aliases for renamed/deprecated skills
+   - Avoid alias loops (`a -> b -> a`)
+3. Update `config/router-thresholds.json` only with evidence
+   - Provide before/after routing metrics
+   - Keep fallback threshold conservative
+4. Update `scripts/verify/vibe-pack-routing-smoke.ps1`
+   - Add assertions for new packs and safety invariants
+
 ## Adapting to Tool Updates
 
 ### Minor Updates (patch/minor version)

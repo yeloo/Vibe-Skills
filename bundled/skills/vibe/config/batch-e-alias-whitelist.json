@@ -1,0 +1,516 @@
+﻿{
+    "version":  1,
+    "updated":  "2026-02-24",
+    "mode":  "audit_only_no_delete",
+    "status":  "historical_snapshot_after_batch_e_cleanup",
+    "note":  "This file is retained for audit traceability only. Runtime routing uses config/skill-alias-map.json (canonical-only as of 2026-02-24).",
+    "source_audit":  "outputs/routing-audit/batche-alias-impact-scan.json",
+    "policy":  {
+                   "min_release_cycles_before_removal":  2,
+                   "delete_gate_required":  [
+                                                "vibe-routing-smoke.ps1",
+                                                "vibe-pack-routing-smoke.ps1",
+                                                "vibe-skill-index-routing-audit.ps1",
+                                                "vibe-keyword-precision-audit.ps1",
+                                                "vibe-pack-regression-matrix.ps1"
+                                            ]
+               },
+    "summary":  {
+                    "total_aliases":  28,
+                    "low_risk_candidates":  15,
+                    "medium_risk_defer":  11,
+                    "high_risk_defer":  2,
+                    "candidate_remove_after_gate":  15,
+                    "defer":  13
+                },
+    "aliases":  [
+                    {
+                        "alias":  "code-review1",
+                        "target":  "code-review",
+                        "external_ref_count":  3,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "References are mainly in docs/reports but still non-zero; remove only after doc cleanup and stability re-check.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\docs\\skills-consolidation-batch-plan.md:14:  - `code-review1..4 -\u003e code-review`",
+                                                    ".\\skills\\vibe\\bundled\\skills\\vibe\\docs\\skills-consolidation-batch-plan.md:14:  - `code-review1..4 -\u003e code-review`",
+                                                    ".\\skills\\vibe\\bundled\\skills\\vibe\\docs\\hard-migration-batch-a-report.md:10:- `skills/code-review1`"
+                                                ],
+                        "preconditions":  [
+                                              "Clean stale docs/reports that mention alias as active entry.",
+                                              "Verify no automation/tooling consumes the alias string from docs/config.",
+                                              "Pass routing + precision + regression matrix before delete."
+                                          ]
+                    },
+                    {
+                        "alias":  "code-review2",
+                        "target":  "code-review",
+                        "external_ref_count":  1,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "References are mainly in docs/reports but still non-zero; remove only after doc cleanup and stability re-check.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\bundled\\skills\\vibe\\docs\\hard-migration-batch-a-report.md:11:- `skills/code-review2`"
+                                                ],
+                        "preconditions":  [
+                                              "Clean stale docs/reports that mention alias as active entry.",
+                                              "Verify no automation/tooling consumes the alias string from docs/config.",
+                                              "Pass routing + precision + regression matrix before delete."
+                                          ]
+                    },
+                    {
+                        "alias":  "code-review3",
+                        "target":  "code-review",
+                        "external_ref_count":  10,
+                        "risk_level":  "high",
+                        "action":  "defer",
+                        "removal_phase":  "E4",
+                        "reason":  "Referenced by verification scripts and/or workflow mapping; deleting now would break regression checks.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\scripts\\verify\\vibe-soft-migration-practice.ps1:49:$c1 = Invoke-Route -Prompt \"run code review and security scan\" -Grade \"M\" -TaskType \"review\" -RequestedSkill \"code-review3\"",
+                                                    ".\\skills\\vibe\\scripts\\verify\\vibe-soft-migration-practice.ps1:50:$results += Assert-True -Condition ($c1.alias.alias_hit -eq $true) -Message \"code-review3 alias hit\"",
+                                                    ".\\skills\\vibe\\scripts\\verify\\vibe-soft-migration-practice.ps1:51:$results += Assert-True -Condition ($c1.alias.canonical -eq \"code-review\") -Message \"code-review3 canonical -\u003e code-review\"",
+                                                    ".\\skills\\vibe\\scripts\\verify\\vibe-pack-regression-matrix.ps1:46:    [pscustomobject]@{ Name = \"code-quality review alias\"; Prompt = \"run code review and security scan\"; Grade = \"M\"; TaskType = \"review\"; RequestedSkill = \"code-review3\"; ExpectedPack = \"code-quality\"; ExpectedMode = \"pack_overlay\" },",
+                                                    ".\\skills\\vibe\\scripts\\verify\\vibe-pack-regression-matrix.ps1:81:$detA = Invoke-Route -Prompt \"run code review and security scan\" -Grade \"M\" -TaskType \"review\" -RequestedSkill \"code-review3\""
+                                                ],
+                        "preconditions":  [
+                                              "Update verification scripts to use canonical skill `code-review` in requested-skill path and keep alias-compat tests in dedicated compatibility suite.",
+                                              "Replace non-test documentation/integration references (`spec-kit-vibe-compat/command-map.json`, `skills/security-reviewer/SKILL.md`, `skills/think-harder/SKILL.md`).",
+                                              "Pass full routing regression suite after reference migration."
+                                          ]
+                    },
+                    {
+                        "alias":  "code-review4",
+                        "target":  "code-review",
+                        "external_ref_count":  1,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "References are mainly in docs/reports but still non-zero; remove only after doc cleanup and stability re-check.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\bundled\\skills\\vibe\\docs\\hard-migration-batch-a-report.md:13:- `skills/code-review4`"
+                                                ],
+                        "preconditions":  [
+                                              "Clean stale docs/reports that mention alias as active entry.",
+                                              "Verify no automation/tooling consumes the alias string from docs/config.",
+                                              "Pass routing + precision + regression matrix before delete."
+                                          ]
+                    },
+                    {
+                        "alias":  "xlsx1",
+                        "target":  "xlsx",
+                        "external_ref_count":  7,
+                        "risk_level":  "high",
+                        "action":  "defer",
+                        "removal_phase":  "E4",
+                        "reason":  "Referenced by verification scripts and/or workflow mapping; deleting now would break regression checks.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\scripts\\verify\\vibe-soft-migration-practice.ps1:57:$c2 = Invoke-Route -Prompt \"process xlsx spreadsheet and export results\" -Grade \"M\" -TaskType \"coding\" -RequestedSkill \"xlsx1\"",
+                                                    ".\\skills\\vibe\\scripts\\verify\\vibe-soft-migration-practice.ps1:58:$results += Assert-True -Condition ($c2.alias.alias_hit -eq $true) -Message \"xlsx1 alias hit\"",
+                                                    ".\\skills\\vibe\\scripts\\verify\\vibe-soft-migration-practice.ps1:59:$results += Assert-True -Condition ($c2.alias.canonical -eq \"xlsx\") -Message \"xlsx1 canonical -\u003e xlsx\"",
+                                                    ".\\skills\\vibe\\scripts\\verify\\vibe-pack-regression-matrix.ps1:49:    [pscustomobject]@{ Name = \"docs-media coding alias\"; Prompt = \"process xlsx spreadsheet and export document\"; Grade = \"M\"; TaskType = \"coding\"; RequestedSkill = \"xlsx1\"; ExpectedPack = \"docs-media\"; ExpectedMode = \"pack_overlay\" },",
+                                                    ".\\skills\\vibe\\docs\\skills-consolidation-batch-plan.md:15:  - `xlsx1 -\u003e xlsx`"
+                                                ],
+                        "preconditions":  [
+                                              "Update verification scripts to use canonical skill `xlsx` in requested-skill path and preserve alias behavior in compatibility-only tests.",
+                                              "Clean batch-plan/report references mentioning `xlsx1` as active alias.",
+                                              "Pass full routing regression suite after reference migration."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/skills/vibe",
+                        "target":  "vibe",
+                        "external_ref_count":  3,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "References are mainly in docs/reports but still non-zero; remove only after doc cleanup and stability re-check.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\docs\\soft-migration-batch-b-expansion-report.md:12:  - `skills/vibe/bundled/skills/vibe/config/pack-manifest.json`",
+                                                    ".\\skills\\vibe\\docs\\soft-migration-batch-b-expansion-report.md:13:  - `skills/vibe/bundled/skills/vibe/config/router-thresholds.json`",
+                                                    ".\\skills\\vibe\\bundled\\skills\\vibe\\docs\\hard-migration-batch-cd-pruning-report.md:65:- `skills/vibe/bundled/skills/vibe/config/pack-manifest.json`"
+                                                ],
+                        "preconditions":  [
+                                              "Clean stale docs/reports that mention alias as active entry.",
+                                              "Verify no automation/tooling consumes the alias string from docs/config.",
+                                              "Pass routing + precision + regression matrix before delete."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/skills/think-harder",
+                        "target":  "think-harder",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/skills/tdd-guide",
+                        "target":  "tdd-guide",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/skills/superclaude-framework-compat",
+                        "target":  "superclaude-framework-compat",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/skills/spec-kit-vibe-compat",
+                        "target":  "spec-kit-vibe-compat",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/skills/local-vco-roles",
+                        "target":  "local-vco-roles",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/skills/dialectic",
+                        "target":  "dialectic",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/skills/ralph-loop",
+                        "target":  "ralph-loop",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/skills/cancel-ralph",
+                        "target":  "cancel-ralph",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/superpowers-skills/brainstorming",
+                        "target":  "brainstorming",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/superpowers-skills/writing-plans",
+                        "target":  "writing-plans",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/superpowers-skills/subagent-driven-development",
+                        "target":  "subagent-driven-development",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/superpowers-skills/systematic-debugging",
+                        "target":  "systematic-debugging",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/superpowers-skills/requesting-code-review",
+                        "target":  "requesting-code-review",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/superpowers-skills/receiving-code-review",
+                        "target":  "receiving-code-review",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "vibe/bundled/superpowers-skills/verification-before-completion",
+                        "target":  "verification-before-completion",
+                        "external_ref_count":  0,
+                        "risk_level":  "low",
+                        "action":  "candidate_remove_after_gate",
+                        "removal_phase":  "E2",
+                        "reason":  "No external references detected; eligible for removal after stability gates.",
+                        "blocking_references":  [
+
+                                                ],
+                        "preconditions":  [
+                                              "Keep alias for at least two release cycles per alias-map policy.",
+                                              "Re-run full routing verification suite immediately before delete.",
+                                              "Confirm no new runtime logs reference this alias path."
+                                          ]
+                    },
+                    {
+                        "alias":  "superpowers/skills/brainstorming",
+                        "target":  "brainstorming",
+                        "external_ref_count":  1,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "Referenced by dependency-map and installer/bundling flow; requires packaging migration first.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\config\\dependency-map.json:41:      \"source\": \"C:/Users/羽裳/.codex/superpowers/skills/brainstorming\","
+                                                ],
+                        "preconditions":  [
+                                              "Migrate `skills/vibe/config/dependency-map.json` source paths to canonical skill references (or explicit non-alias path policy).",
+                                              "Validate install/copy pipeline in both `install.ps1` and `install.sh` paths.",
+                                              "Pass check + routing regression after dependency-map update."
+                                          ]
+                    },
+                    {
+                        "alias":  "superpowers/skills/writing-plans",
+                        "target":  "writing-plans",
+                        "external_ref_count":  1,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "Referenced by dependency-map and installer/bundling flow; requires packaging migration first.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\config\\dependency-map.json:45:      \"source\": \"C:/Users/羽裳/.codex/superpowers/skills/writing-plans\","
+                                                ],
+                        "preconditions":  [
+                                              "Migrate `skills/vibe/config/dependency-map.json` source paths to canonical skill references (or explicit non-alias path policy).",
+                                              "Validate install/copy pipeline in both `install.ps1` and `install.sh` paths.",
+                                              "Pass check + routing regression after dependency-map update."
+                                          ]
+                    },
+                    {
+                        "alias":  "superpowers/skills/subagent-driven-development",
+                        "target":  "subagent-driven-development",
+                        "external_ref_count":  1,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "Referenced by dependency-map and installer/bundling flow; requires packaging migration first.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\config\\dependency-map.json:49:      \"source\": \"C:/Users/羽裳/.codex/superpowers/skills/subagent-driven-development\","
+                                                ],
+                        "preconditions":  [
+                                              "Migrate `skills/vibe/config/dependency-map.json` source paths to canonical skill references (or explicit non-alias path policy).",
+                                              "Validate install/copy pipeline in both `install.ps1` and `install.sh` paths.",
+                                              "Pass check + routing regression after dependency-map update."
+                                          ]
+                    },
+                    {
+                        "alias":  "superpowers/skills/systematic-debugging",
+                        "target":  "systematic-debugging",
+                        "external_ref_count":  1,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "Referenced by dependency-map and installer/bundling flow; requires packaging migration first.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\config\\dependency-map.json:53:      \"source\": \"C:/Users/羽裳/.codex/superpowers/skills/systematic-debugging\","
+                                                ],
+                        "preconditions":  [
+                                              "Migrate `skills/vibe/config/dependency-map.json` source paths to canonical skill references (or explicit non-alias path policy).",
+                                              "Validate install/copy pipeline in both `install.ps1` and `install.sh` paths.",
+                                              "Pass check + routing regression after dependency-map update."
+                                          ]
+                    },
+                    {
+                        "alias":  "superpowers/skills/requesting-code-review",
+                        "target":  "requesting-code-review",
+                        "external_ref_count":  1,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "Referenced by dependency-map and installer/bundling flow; requires packaging migration first.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\config\\dependency-map.json:57:      \"source\": \"C:/Users/羽裳/.codex/superpowers/skills/requesting-code-review\","
+                                                ],
+                        "preconditions":  [
+                                              "Migrate `skills/vibe/config/dependency-map.json` source paths to canonical skill references (or explicit non-alias path policy).",
+                                              "Validate install/copy pipeline in both `install.ps1` and `install.sh` paths.",
+                                              "Pass check + routing regression after dependency-map update."
+                                          ]
+                    },
+                    {
+                        "alias":  "superpowers/skills/receiving-code-review",
+                        "target":  "receiving-code-review",
+                        "external_ref_count":  1,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "Referenced by dependency-map and installer/bundling flow; requires packaging migration first.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\config\\dependency-map.json:61:      \"source\": \"C:/Users/羽裳/.codex/superpowers/skills/receiving-code-review\","
+                                                ],
+                        "preconditions":  [
+                                              "Migrate `skills/vibe/config/dependency-map.json` source paths to canonical skill references (or explicit non-alias path policy).",
+                                              "Validate install/copy pipeline in both `install.ps1` and `install.sh` paths.",
+                                              "Pass check + routing regression after dependency-map update."
+                                          ]
+                    },
+                    {
+                        "alias":  "superpowers/skills/verification-before-completion",
+                        "target":  "verification-before-completion",
+                        "external_ref_count":  1,
+                        "risk_level":  "medium",
+                        "action":  "defer",
+                        "removal_phase":  "E3",
+                        "reason":  "Referenced by dependency-map and installer/bundling flow; requires packaging migration first.",
+                        "blocking_references":  [
+                                                    ".\\skills\\vibe\\config\\dependency-map.json:65:      \"source\": \"C:/Users/羽裳/.codex/superpowers/skills/verification-before-completion\","
+                                                ],
+                        "preconditions":  [
+                                              "Migrate `skills/vibe/config/dependency-map.json` source paths to canonical skill references (or explicit non-alias path policy).",
+                                              "Validate install/copy pipeline in both `install.ps1` and `install.sh` paths.",
+                                              "Pass check + routing regression after dependency-map update."
+                                          ]
+                    }
+                ]
+}

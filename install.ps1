@@ -22,6 +22,9 @@ Write-Host "=== VCO Codex Installer ===" -ForegroundColor Cyan
 Write-Host "Profile: $Profile"
 Write-Host "Target : $TargetRoot"
 
+$canonicalSkillsRoot = Split-Path -Parent $RepoRoot
+$workspaceRoot = Split-Path -Parent $canonicalSkillsRoot
+
 $paths = @(
   "skills",
   "rules",
@@ -37,16 +40,51 @@ foreach ($p in $paths) {
 
 Copy-DirContent -Source (Join-Path $RepoRoot 'bundled\skills') -Destination (Join-Path $TargetRoot 'skills')
 
+$requiredCore = @('dialectic', 'local-vco-roles', 'spec-kit-vibe-compat', 'superclaude-framework-compat', 'ralph-loop', 'cancel-ralph', 'tdd-guide', 'think-harder')
+foreach ($name in $requiredCore) {
+  $canonicalSrc = Join-Path $canonicalSkillsRoot $name
+  $bundledSrc = Join-Path $RepoRoot ("bundled\skills\" + $name)
+  if (Test-Path -LiteralPath $canonicalSrc) {
+    Copy-DirContent -Source $canonicalSrc -Destination (Join-Path $TargetRoot "skills\$name")
+  } elseif (Test-Path -LiteralPath $bundledSrc) {
+    Copy-DirContent -Source $bundledSrc -Destination (Join-Path $TargetRoot "skills\$name")
+  } else {
+    Write-Warning "Missing required core skill source: $name"
+  }
+}
+
 $requiredSp = @('brainstorming', 'writing-plans', 'subagent-driven-development', 'systematic-debugging')
 $optionalSp = @('requesting-code-review', 'receiving-code-review', 'verification-before-completion')
 
+$spCanonicalRoot = Join-Path $workspaceRoot 'skills'
+$legacySpRoot = Join-Path $workspaceRoot 'superpowers\skills'
 $spSrcRoot = Join-Path $RepoRoot 'bundled\superpowers-skills'
 foreach ($name in $requiredSp) {
-  Copy-DirContent -Source (Join-Path $spSrcRoot $name) -Destination (Join-Path $TargetRoot "skills\$name")
+  $canonicalSrc = Join-Path $spCanonicalRoot $name
+  $legacySrc = Join-Path $legacySpRoot $name
+  $bundledSrc = Join-Path $spSrcRoot $name
+  if (Test-Path -LiteralPath $canonicalSrc) {
+    Copy-DirContent -Source $canonicalSrc -Destination (Join-Path $TargetRoot "skills\$name")
+  } elseif (Test-Path -LiteralPath $legacySrc) {
+    Copy-DirContent -Source $legacySrc -Destination (Join-Path $TargetRoot "skills\$name")
+  } elseif (Test-Path -LiteralPath $bundledSrc) {
+    Copy-DirContent -Source $bundledSrc -Destination (Join-Path $TargetRoot "skills\$name")
+  } else {
+    Write-Warning "Missing required workflow skill source: $name"
+  }
 }
 if ($Profile -eq 'full') {
   foreach ($name in $optionalSp) {
-    Copy-DirContent -Source (Join-Path $spSrcRoot $name) -Destination (Join-Path $TargetRoot "skills\$name")
+    $canonicalSrc = Join-Path $spCanonicalRoot $name
+    $legacySrc = Join-Path $legacySpRoot $name
+    $bundledSrc = Join-Path $spSrcRoot $name
+    if (Test-Path -LiteralPath $canonicalSrc) {
+      Copy-DirContent -Source $canonicalSrc -Destination (Join-Path $TargetRoot "skills\$name")
+    } elseif (Test-Path -LiteralPath $legacySrc) {
+      Copy-DirContent -Source $legacySrc -Destination (Join-Path $TargetRoot "skills\$name")
+    } elseif (Test-Path -LiteralPath $bundledSrc) {
+      Copy-DirContent -Source $bundledSrc -Destination (Join-Path $TargetRoot "skills\$name")
+    }
   }
 }
 

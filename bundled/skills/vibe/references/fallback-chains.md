@@ -13,6 +13,7 @@ Fallback triggers:
 - Agent timeout or error
 - Tool produces no useful output
 - Plugin not installed
+- Pack router confidence below configured threshold
 
 ## M/L Grade Fallback Chains (2-Level)
 
@@ -59,6 +60,17 @@ Fallback triggers:
 | L | claude-code-settings:think-ultra | claude-code-settings:think-harder |
 
 If both levels fail: fall back to direct Claude reasoning (no tool).
+
+## Pack Router Overlay Fallback
+
+```
+Pack scoring success + confidence >= threshold
+  -> route by selected pack skill candidates
+Pack scoring success + confidence < threshold
+  -> fallback to legacy Grade×Type matrix
+Pack config missing/invalid
+  -> fallback to legacy Grade×Type matrix
+```
 
 ## XL Grade Fallback Chain (3-Level)
 

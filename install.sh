@@ -15,18 +15,46 @@ while [[ $# -gt 0 ]]; do
 done
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CANONICAL_SKILLS_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+WORKSPACE_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+WORKSPACE_SKILLS_ROOT="${WORKSPACE_ROOT}/skills"
+WORKSPACE_SUPERPOWERS_ROOT="${WORKSPACE_ROOT}/superpowers/skills"
 
 mkdir -p "${TARGET_ROOT}/skills" "${TARGET_ROOT}/rules" "${TARGET_ROOT}/hooks" "${TARGET_ROOT}/agents/templates" "${TARGET_ROOT}/mcp/profiles" "${TARGET_ROOT}/config" "${TARGET_ROOT}/commands"
 
 cp -R "${SCRIPT_DIR}/bundled/skills/." "${TARGET_ROOT}/skills/"
 
+for n in dialectic local-vco-roles spec-kit-vibe-compat superclaude-framework-compat ralph-loop cancel-ralph tdd-guide think-harder; do
+  if [[ -d "${CANONICAL_SKILLS_ROOT}/${n}" ]]; then
+    cp -R "${CANONICAL_SKILLS_ROOT}/${n}" "${TARGET_ROOT}/skills/"
+  elif [[ -d "${SCRIPT_DIR}/bundled/skills/${n}" ]]; then
+    cp -R "${SCRIPT_DIR}/bundled/skills/${n}" "${TARGET_ROOT}/skills/"
+  else
+    echo "[WARN] missing required core skill source: ${n}"
+  fi
+done
+
 for n in brainstorming writing-plans subagent-driven-development systematic-debugging; do
-  cp -R "${SCRIPT_DIR}/bundled/superpowers-skills/${n}" "${TARGET_ROOT}/skills/"
+  if [[ -d "${WORKSPACE_SKILLS_ROOT}/${n}" ]]; then
+    cp -R "${WORKSPACE_SKILLS_ROOT}/${n}" "${TARGET_ROOT}/skills/"
+  elif [[ -d "${WORKSPACE_SUPERPOWERS_ROOT}/${n}" ]]; then
+    cp -R "${WORKSPACE_SUPERPOWERS_ROOT}/${n}" "${TARGET_ROOT}/skills/"
+  elif [[ -d "${SCRIPT_DIR}/bundled/superpowers-skills/${n}" ]]; then
+    cp -R "${SCRIPT_DIR}/bundled/superpowers-skills/${n}" "${TARGET_ROOT}/skills/"
+  else
+    echo "[WARN] missing required workflow skill source: ${n}"
+  fi
 done
 
 if [[ "${PROFILE}" == "full" ]]; then
   for n in requesting-code-review receiving-code-review verification-before-completion; do
-    cp -R "${SCRIPT_DIR}/bundled/superpowers-skills/${n}" "${TARGET_ROOT}/skills/"
+    if [[ -d "${WORKSPACE_SKILLS_ROOT}/${n}" ]]; then
+      cp -R "${WORKSPACE_SKILLS_ROOT}/${n}" "${TARGET_ROOT}/skills/"
+    elif [[ -d "${WORKSPACE_SUPERPOWERS_ROOT}/${n}" ]]; then
+      cp -R "${WORKSPACE_SUPERPOWERS_ROOT}/${n}" "${TARGET_ROOT}/skills/"
+    elif [[ -d "${SCRIPT_DIR}/bundled/superpowers-skills/${n}" ]]; then
+      cp -R "${SCRIPT_DIR}/bundled/superpowers-skills/${n}" "${TARGET_ROOT}/skills/"
+    fi
   done
 fi
 

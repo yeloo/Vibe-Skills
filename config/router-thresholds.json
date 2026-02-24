@@ -1,0 +1,23 @@
+﻿{
+    "version":  1,
+    "updated":  "2026-02-24",
+    "weights":  {
+                    "intent_match":  0.4,
+                    "trigger_keyword_match":  0.25,
+                    "workspace_signal_match":  0.2,
+                    "skill_keyword_signal":  0.25,
+                    "recent_success_prior":  0.1,
+                    "conflict_penalty_inverse":  0.05
+                },
+    "thresholds":  {
+                       "auto_route":  0.7,
+                       "confirm_required":  0.45,
+                       "fallback_to_legacy_below":  0.45
+                   },
+    "safety":  {
+                   "enforce_grade_boundary":  true,
+                   "enforce_task_boundary":  true,
+                   "max_skill_candidates_per_pack":  80,
+                   "allow_pack_override_by_explicit_user_command":  true
+               }
+}

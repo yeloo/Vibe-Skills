@@ -11,6 +11,10 @@ Navigation guide for all VCO (Vibe Code Orchestrator) documentation.
 | [fallback-chains.md](fallback-chains.md) | Error recovery: M/L=2-level, XL=3-level degradation paths |
 | [team-templates.md](team-templates.md) | 6 predefined team compositions for XL-grade tasks |
 | [extending-vco.md](extending-vco.md) | Guide for adding new tools or adapting to tool updates |
+| [../docs/skills-consolidation-roadmap.md](../docs/skills-consolidation-roadmap.md) | Consolidation phases, quality gates, rollback strategy |
+| [../docs/skills-consolidation-batch-plan.md](../docs/skills-consolidation-batch-plan.md) | Batch-by-batch migration execution plan |
+| [../docs/soft-migration-playbook.md](../docs/soft-migration-playbook.md) | Practical validation checklist for soft migration |
+| [../docs/hard-migration-batch-a-report.md](../docs/hard-migration-batch-a-report.md) | Batch A hard migration execution and verification report |
 | [changelog.md](changelog.md) | Version history |
 
 ## Protocol Specifications

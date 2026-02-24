@@ -24,7 +24,7 @@ function Assert-FileContains {
         [string]$Message
     )
 
-    $content = Get-Content -Path $Path -Raw
+    $content = Get-Content -Path $Path -Raw -Encoding UTF8
     return Assert-True -Condition ([bool]($content -match $Pattern)) -Message $Message
 }
 
@@ -35,7 +35,7 @@ function Assert-FileNotContains {
         [string]$Message
     )
 
-    $content = Get-Content -Path $Path -Raw
+    $content = Get-Content -Path $Path -Raw -Encoding UTF8
     return Assert-True -Condition (-not [bool]($content -match $Pattern)) -Message $Message
 }
 
