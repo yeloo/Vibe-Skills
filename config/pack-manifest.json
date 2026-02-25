@@ -369,7 +369,8 @@
                                                "spreadsheet",
                                                "transcribe",
                                                "writing-docs",
-                                               "xlsx"
+                                               "xlsx",
+                                               "xan"
                                            ],
                       "defaults_by_task":  {
                                                "planning":  "docs-write",

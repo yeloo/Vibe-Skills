@@ -156,6 +156,21 @@ if ($InstallExternal) {
     }
   }
 
+  if (-not (Get-Command xan -ErrorAction SilentlyContinue)) {
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+      try {
+        scoop install xan | Out-Null
+        Write-Host "Installed xan (via scoop)"
+      } catch {
+        Write-Warning "Failed to install xan via scoop"
+      }
+    } else {
+      Write-Warning "xan CLI not detected. Install manually (Windows: scoop install xan) to enable large CSV acceleration."
+    }
+  } else {
+    Write-Host "xan already installed"
+  }
+
   try {
     $manifest = Get-Content -LiteralPath (Join-Path $RepoRoot 'config\plugins-manifest.codex.json') -Raw | ConvertFrom-Json
     Write-Host "Codex-only mode: plugin auto-install commands are disabled."

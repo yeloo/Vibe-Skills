@@ -72,6 +72,14 @@
       "integration_mode": "upstream-locked",
       "local_rewrite_required": false,
       "notes": "Optional external runtime dependency"
+    },
+    {
+      "id": "medialab/xan",
+      "upstream_repo": "https://github.com/medialab/xan",
+      "upstream_ref": "master",
+      "integration_mode": "optional-external-cli",
+      "local_rewrite_required": false,
+      "notes": "Optional large-CSV CLI backend used by data-scale overlay and xan skill"
     }
   ]
 }

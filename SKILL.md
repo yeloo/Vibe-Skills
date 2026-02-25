@@ -104,6 +104,7 @@ After grade and task-type are decided, VCO applies a pack overlay:
 
 Pack routing MUST respect grade/task boundaries and Rule 3 command priority.
 When `config/prompt-overlay.json` is enabled, router emits `prompt_overlay_advice` and may elevate ambiguous prompt-vs-doc requests to `confirm_required` without replacing pack selection.
+When `config/data-scale-overlay.json` is enabled, router emits `data_scale_advice` and can adapt spreadsheet skill selection by real file signals (size/rows/format) in a mode-gated, post-route way.
 
 Specialized agents available at ANY grade (exempt from agent boundary rule):
 - build-error-resolver: build-specific errors (compat alias: local `error-resolver`)
@@ -235,6 +236,7 @@ Detect availability AFTER routing selects a tool, BEFORE invoking:
 | docs/gsd-vco-overlay-integration.md | GSD-Lite overlay integration (post-route planning hook) |
 | docs/memory-governance-integration.md | Memory governance integration (role boundaries + disabled episodic-memory) |
 | docs/prompt-overlay-integration.md | prompts.chat prompt-asset overlay integration (post-route ambiguity guard) |
+| docs/data-scale-overlay-integration.md | Data-scale overlay integration (real file probe + spreadsheet/xlsx/xan adaptive selection) |
 | docs/skills-consolidation-roadmap.md | Pack consolidation phases and gates |
 | changelog.md | Version history |
 | index.md | Navigation index |

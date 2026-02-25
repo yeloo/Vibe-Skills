@@ -102,6 +102,9 @@
     "spreadsheet": {
       "keywords": ["spreadsheet", "csv", "tsv", "表格处理", "批量表格", "数据表整理"]
     },
+    "xan": {
+      "keywords": ["xan", "large csv", "big csv", "streaming csv", "low memory csv", "csv pipeline", "百万行csv", "超大csv", "流式csv", "低内存处理"]
+    },
     "pdf": {
       "keywords": ["pdf extract", "pdf parse", "读取pdf", "提取pdf文本", "pdf报告处理"]
     },

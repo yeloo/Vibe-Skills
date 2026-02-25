@@ -15,6 +15,7 @@ Complete reference of VCO execution tools, their capabilities, APIs, state paths
 | 7 | Codex native team runtime | Native runtime APIs | None | Session runtime | ✅ |
 | 8 | Open Ralph Wiggum CLI (optional) | External CLI | None | .ralph/ | ⚠️ Optional |
 | 9 | Cognee (optional long-term memory) | External graph memory backend | None | External/adapter-managed | ⚠️ Optional |
+| 10 | xan (optional large-CSV backend) | External CLI | None | Dataset files / shell pipelines | ⚠️ Optional |
 
 ## Verification Status Legend
 
@@ -273,3 +274,21 @@ Characteristics:
 - VCO route selection remains unchanged; memory governance is post-route advice only.
 - If Cognee is unavailable, fall back to Serena summaries for long-term retrieval.
 - Never use Cognee to replace state_store session state tracking.
+
+---
+
+## 10. xan (Optional Large-CSV Backend)
+
+**Package**: `xan`  
+**Binary**: `xan`
+
+### Key Capabilities
+- High-performance CSV/TSV processing (Rust, low-memory, streaming-friendly)
+- Fast tabular operations (`filter`, `sort`, `dedup`, `join`, `groupby`, `frequency`)
+- Works well for large flat files where workbook semantics are not required
+
+### VCO Integration Boundary
+- Routed as a skill candidate under `docs-media` for tabular tasks.
+- Activated through data-scale overlay (`data_scale_advice`) using real file signals.
+- Does not replace workbook-focused skills (`xlsx`, `excel-analysis`).
+- Does not replace ML workflow routing (`data-ml` pack remains authoritative for model tasks).

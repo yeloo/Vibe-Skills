@@ -1,5 +1,35 @@
 # VCO Changelog
 
+## v2.3.7 (2026-02-25)
+
+- 新增 Data Scale Overlay（基于真实文件信号的表格技能选择增强，post-route，不替代 Pack 路由）：
+  - 新增配置（main + bundled）：
+    - `config/data-scale-overlay.json`
+    - `bundled/skills/vibe/config/data-scale-overlay.json`
+  - 路由器输出新增：
+    - `data_scale_advice`
+    - `data_scale_route_override`
+  - 语义行为：
+    - `shadow`：仅建议，不改 selected skill
+    - `soft`：规模/格式推荐与当前技能冲突时进入 `confirm_required`
+    - `strict`：高置信可在同 pack 候选内自动覆盖到推荐技能（如 `xan`）
+- 表格路由增强：
+  - `docs-media` pack 新增候选 `xan`
+  - `skill-keyword-index.json` 新增 `xan` 关键词
+  - `skill-routing-rules.json` 新增 `xan` 规则，并收敛 `spreadsheet` 在大 CSV 意图下的负关键词
+- 新增验证门禁：
+  - `scripts/verify/vibe-data-scale-overlay-gate.ps1`
+  - `scripts/verify/vibe-config-parity-gate.ps1` 纳入 `data-scale-overlay` main/bundled parity
+  - `scripts/verify/README.md` 增加执行入口
+- 新增设计文档：
+  - `docs/data-scale-overlay-integration.md`（main + bundled）
+- 文档同步：
+  - `README.md`、`SKILL.md`、`references/index.md` 更新 data-scale overlay 说明与入口
+- 验证结果（本地）：
+  - `scripts/verify/vibe-pack-routing-smoke.ps1`：PASS
+  - `scripts/verify/vibe-config-parity-gate.ps1`：PASS
+  - `scripts/verify/vibe-data-scale-overlay-gate.ps1`：PASS
+
 ## v2.3.6 (2026-02-25)
 
 - 修复统一 `/vibe` 入口安装漂移问题（关键修复）：

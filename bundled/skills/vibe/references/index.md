@@ -19,6 +19,7 @@ Navigation guide for all VCO (Vibe Code Orchestrator) documentation.
 | [../docs/gsd-vco-overlay-integration.md](../docs/gsd-vco-overlay-integration.md) | GSD-Lite overlay design (post-route planning hook, non-redundant integration) |
 | [../docs/memory-governance-integration.md](../docs/memory-governance-integration.md) | Memory governance design (state_store/Serena/ruflo/Cognee boundaries + episodic disablement) |
 | [../docs/prompt-overlay-integration.md](../docs/prompt-overlay-integration.md) | prompts.chat prompt-asset overlay design (post-route ambiguity guard, non-redundant integration) |
+| [../docs/data-scale-overlay-integration.md](../docs/data-scale-overlay-integration.md) | Data-scale overlay design (real file probe + spreadsheet/xlsx/xan adaptive selection) |
 | [../templates/cer-report.md.template](../templates/cer-report.md.template) | CER markdown template for human-readable retro reports |
 | [../templates/cer-report.json.template](../templates/cer-report.json.template) | CER JSON template for machine analytics and comparison |
 | [../templates/cer-report.schema.json](../templates/cer-report.schema.json) | CER JSON schema for validation gates |

@@ -36,6 +36,7 @@ for n in vibe dialectic local-vco-roles spec-kit-vibe-compat superclaude-framewo
 done
 check_path "vibe router script" "${TARGET_ROOT}/skills/vibe/scripts/router/resolve-pack-route.ps1"
 check_path "vibe memory governance config" "${TARGET_ROOT}/skills/vibe/config/memory-governance.json"
+check_path "vibe data scale overlay config" "${TARGET_ROOT}/skills/vibe/config/data-scale-overlay.json"
 for n in brainstorming writing-plans subagent-driven-development systematic-debugging; do
   check_path "workflow/${n}" "${TARGET_ROOT}/skills/${n}/SKILL.md"
 done

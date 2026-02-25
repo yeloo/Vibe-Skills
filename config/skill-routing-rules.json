@@ -1081,18 +1081,59 @@
                                                                  "tabular transform",
                                                                  "data table cleanup"
                                                              ],
-                                       "negative_keywords":  [
-                                                                 "xlsx",
-                                                                 "workbook",
-                                                                 "preserve formulas",
-                                                                 "保留公式",
-                                                                 "excel model"
-                                                             ],
-                                       "equivalent_group":  "tabular-processing",
-                                       "canonical_for_task":  [
-                                                                  "coding"
-                                                              ]
-                                   },
+                                        "negative_keywords":  [
+                                                                  "xlsx",
+                                                                  "workbook",
+                                                                  "preserve formulas",
+                                                                  "保留公式",
+                                                                  "excel model",
+                                                                  "large csv",
+                                                                  "big csv",
+                                                                  "streaming csv",
+                                                                  "million rows",
+                                                                  "gigabyte csv",
+                                                                  "超大csv",
+                                                                  "百万行"
+                                                              ],
+                                        "equivalent_group":  "tabular-processing",
+                                        "canonical_for_task":  [
+                                                                   "coding"
+                                                               ]
+                                    },
+                   "xan":  {
+                               "task_allow":  [
+                                                  "coding",
+                                                  "research"
+                                              ],
+                               "positive_keywords":  [
+                                                         "xan",
+                                                         "large csv",
+                                                         "big csv",
+                                                         "streaming csv",
+                                                         "low memory",
+                                                         "csv pipeline",
+                                                         "million rows",
+                                                         "gigabyte csv",
+                                                         "大csv",
+                                                         "超大csv",
+                                                         "百万行",
+                                                         "低内存",
+                                                         "流式处理"
+                                                     ],
+                               "negative_keywords":  [
+                                                         "xlsx",
+                                                         "workbook",
+                                                         "preserve formulas",
+                                                         "pivot table",
+                                                         "excel chart",
+                                                         "保留公式",
+                                                         "数据透视"
+                                                     ],
+                               "equivalent_group":  "tabular-processing",
+                               "canonical_for_task":  [
+
+                                                      ]
+                           },
                    "xlsx":  {
                                 "task_allow":  [
                                                    "coding",

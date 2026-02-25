@@ -82,6 +82,18 @@ if [[ "${INSTALL_EXTERNAL}" == "true" ]]; then
     npm install -g claude-flow || true
     npm install -g @th0rgal/ralph-wiggum || true
   fi
+
+  if ! command -v xan >/dev/null 2>&1; then
+    if command -v brew >/dev/null 2>&1; then
+      brew install xan || true
+    elif command -v pixi >/dev/null 2>&1; then
+      pixi global install xan || true
+    elif command -v conda >/dev/null 2>&1; then
+      conda install -y conda-forge::xan || true
+    else
+      echo "[WARN] xan CLI not detected. Install manually (brew/pixi/conda/cargo) to enable large CSV acceleration."
+    fi
+  fi
 fi
 
 echo "Install done. Run: bash check.sh --profile ${PROFILE} --target-root ${TARGET_ROOT}"
