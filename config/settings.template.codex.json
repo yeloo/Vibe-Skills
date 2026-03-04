@@ -1,7 +1,7 @@
 ﻿{
   "env": {
     "OPENAI_API_KEY": "<REQUIRED>",
-    "OPENAI_BASE_URL": "<OPTIONAL e.g. https://right.codes/codex>",
+    "OPENAI_BASE_URL": "<OPTIONAL e.g. https://right.codes/codex/v1>",
     "VCO_PROFILE": "full",
     "VCO_CODEX_MODE": "true"
   },

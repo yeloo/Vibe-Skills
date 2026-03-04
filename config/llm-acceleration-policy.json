@@ -2,7 +2,7 @@
   "version": 1,
   "updated": "2026-03-04",
   "enabled": true,
-  "mode": "shadow",
+  "mode": "soft",
   "activation": {
     "explicit_vibe_only": true
   },
@@ -20,7 +20,7 @@
   "provider": {
     "type": "openai",
     "model": "gpt-5.2-high",
-    "base_url": "https://right.codes/codex",
+    "base_url": "https://right.codes/codex/v1",
     "timeout_ms": 12000,
     "max_output_tokens": 900,
     "temperature": 0.2,
@@ -47,6 +47,7 @@
     "max_live_apply_rate": 1.0
   }
 }
+
 
 
 
