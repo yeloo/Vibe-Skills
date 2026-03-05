@@ -316,8 +316,8 @@ Detect availability AFTER routing selects a tool, BEFORE invoking:
 
 ## Maintenance
 
-- Version: 2.3.24
-- Updated: 2026-02-27
+- Version: 2.3.28
+- Updated: 2026-03-05
 - Sources: Source code analysis of 6 plugins (2026-02-18) + Agent-Skills-for-Context-Engineering (2026-02-24)
 - Changelog: references/changelog.md
 - Known limits:

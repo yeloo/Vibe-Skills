@@ -6,3 +6,4 @@
 - `gitnexus-overlay.md`：将 GitNexus 作为“代码理解/变更感知”的底层能力，以 advice-only overlay 方式接入（支持与部门 overlay 组合）。
 - `gitnexus-mcp-integration-draft.md`：GitNexus MCP（工具层）接入草案：配置方式、治理边界、fallback、rollout 分阶段方案。
 - `gitnexus-execution-checklist.md`：按步骤接入 GitNexus MCP 到 Codex CLI，并跑通索引/验证/VCO overlay 注入的执行清单。
+- `turix-cua-overlay.md`：将 TuriX‑CUA（Computer Use Agent）以 advice-only overlay 方式接入，用于 UI/网页自动化任务的路径选择（CUA vs Playwright vs API）。

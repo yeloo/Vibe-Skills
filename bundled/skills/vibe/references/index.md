@@ -30,6 +30,7 @@ Navigation guide for all VCO (Vibe Code Orchestrator) documentation.
 | [../docs/gitnexus-overlay.md](../docs/gitnexus-overlay.md) | External expert prompt overlays: GitNexus foundation (code understanding / impact / change awareness, advice-only) |
 | [../docs/gitnexus-mcp-integration-draft.md](../docs/gitnexus-mcp-integration-draft.md) | GitNexus MCP integration draft (Codex CLI `codex mcp add`, indexing, governance, fallback) |
 | [../docs/gitnexus-execution-checklist.md](../docs/gitnexus-execution-checklist.md) | GitNexus × Codex CLI × VCO execution checklist (install → index → verify → overlay injection) |
+| [../docs/turix-cua-overlay.md](../docs/turix-cua-overlay.md) | UI automation overlays: TuriX‑CUA Computer Use Agent (CUA vs Playwright vs API decision tree, advice-only) |
 | [../docs/observability-consistency-governance.md](../docs/observability-consistency-governance.md) | Strict observability/consistency governance (lean telemetry + manual rollback confirmation policy) |
 | [../docs/ai-rerank-overlay-integration.md](../docs/ai-rerank-overlay-integration.md) | AI rerank B+ overlay design (Top-K constrained ambiguity rerank with shadow-safe rollout) |
 | [../docs/retrieval-overlay-integration.md](../docs/retrieval-overlay-integration.md) | Retrieval overlay design (profile-guided query/source/rerank strategy with mode-gated advisory enforcement) |
@@ -39,6 +40,7 @@ Navigation guide for all VCO (Vibe Code Orchestrator) documentation.
 | [../docs/heartbeat-runtime-integration.md](../docs/heartbeat-runtime-integration.md) | Heartbeat runtime integration design (anti-silent-execution watchdog with stall diagnosis and progress telemetry) |
 | [../docs/heartbeat-unified-vibe-entry-recheck-2026-02-27.md](../docs/heartbeat-unified-vibe-entry-recheck-2026-02-27.md) | Unified `$vibe` entry recheck report for heartbeat trigger correctness and strict escalation validation |
 | [../docs/version-packaging-governance.md](../docs/version-packaging-governance.md) | Version/source-of-truth governance and canonical-bundled packaging mirror workflow |
+| [../docs/releases/v2.3.28.md](../docs/releases/v2.3.28.md) | Release notes for TurboMax acceleration overlays + prompt asset boost + UI computer use overlays |
 | [../docs/releases/v2.3.24.md](../docs/releases/v2.3.24.md) | Release note template instance and migration notes for governance hardening |
 | [../docs/router-modularization-governance.md](../docs/router-modularization-governance.md) | Router modularization governance (legacy-vs-modular contract gate + zero-regression rollout discipline) |
 | [../templates/cer-report.md.template](../templates/cer-report.md.template) | CER markdown template for human-readable retro reports |

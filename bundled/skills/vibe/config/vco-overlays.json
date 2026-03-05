@@ -10,6 +10,12 @@
       "priority_boost": 0.15
     },
     {
+      "id": "turix-cua",
+      "name": "TuriX‑CUA (Computer Use Agent)",
+      "config_path": "config/turix-cua-overlays.json",
+      "priority_boost": 0
+    },
+    {
       "id": "agency",
       "name": "agency-agents (Departments)",
       "config_path": "config/agency-overlays.json",
@@ -25,4 +31,3 @@
     "any": ["gitnexus-foundation", "agency-testing", "agency-engineering", "agency-project-management"]
   }
 }
-

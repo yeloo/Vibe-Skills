@@ -1,5 +1,19 @@
 # VCO Changelog
 
+## v2.3.28 (2026-03-05)
+
+- TurboMax（方案 A：API 换时间）能力补齐：
+  - 向量优先 diff 上下文（vector-first diff context）与缓存策略（降低上下文腐烂风险）。
+  - 新增 Volc Ark embeddings provider（`doubao-embedding-vision-250615`，text-only diff chunk 相似度）。
+- GPT‑5.2 LLM Acceleration Overlay（/vibe 显式启用）：
+  - `diff_digest` / `committee` / `confirm_question_booster` 三件套加速（advice-first，失败自动退化）。
+- prompts.chat Prompt Asset Boost：
+  - 输出 prompts.chat 搜索策略 + 可注入 overlay candidates（不改路由，仅 advice）。
+- 新增 TuriX‑CUA Computer Use Overlay（advice-only）：
+  - UI/浏览器流程任务提供 CUA vs Playwright vs API 决策树与 runbook（自动建议 → 你确认 → 注入）。
+- 可靠性修复：
+  - 修复 PowerShell 输入冲突与 SSE responses 兼容性问题（提升代理/网关兼容）。
+
 ## v2.3.27 (2026-02-27)
 
 - 修复 OpenSpec strict 阻断语义漂移（`scripts/governance/invoke-openspec-governance.ps1`）：

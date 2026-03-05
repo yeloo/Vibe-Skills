@@ -1,9 +1,9 @@
 ﻿{
     "version":  1,
-    "generated_at":  "2026-03-05T01:26:59+08:00",
+    "generated_at":  "2026-03-05T01:36:23+08:00",
     "source":  "bundled/skills",
     "skill_count":  327,
-    "total_bytes":  29449189,
+    "total_bytes":  29449987,
     "skills":  [
                    {
                        "name":  ".system",
@@ -2529,9 +2529,9 @@
                        "name":  "vibe",
                        "relative_path":  "bundled/skills/vibe",
                        "file_count":  472,
-                       "bytes":  4631784,
+                       "bytes":  4632582,
                        "skill_md_hash":  "1c76a76365049ad5aa63b11276ec4861c56a53820deb0c75f4c59c017307ac2d",
-                       "dir_hash":  "85d6786366434527fe0faf4b8789a633497a64fa8edac1541a0b35f005c25f01"
+                       "dir_hash":  "f818759a0a132f9e046fa928eb0d0c89df492321def5b1943098900c5a340779"
                    },
                    {
                        "name":  "visualization-best-practices",
