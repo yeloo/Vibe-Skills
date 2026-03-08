@@ -1,0 +1,433 @@
+{
+    "version":  1,
+    "updated":  "2026-03-08",
+    "governance_plane":  "upstream_corpus",
+    "summary":  {
+                    "total_entries":  19,
+                    "lane_counts":  {
+                                        "connector_admission":  3,
+                                        "desktopops_shadow_source":  1,
+                                        "role_pack_source":  2,
+                                        "skill_catalog_source":  4,
+                                        "discovery_eval_corpus":  4,
+                                        "browserops_provider_source":  1,
+                                        "document_plane_contract":  1,
+                                        "memory_policy_source":  2,
+                                        "prompt_contract_source":  1
+                                    },
+                    "status_counts":  {
+                                          "shadow_governed":  5,
+                                          "tracked_corpus":  7,
+                                          "partial_absorption":  5,
+                                          "catalog_governed":  1,
+                                          "canonical_contract":  1
+                                      },
+                    "owners":  [
+                                   "vco/browserops",
+                                   "vco/connector-admission",
+                                   "vco/desktopops",
+                                   "vco/discovery-corpus",
+                                   "vco/document-plane",
+                                   "vco/memory-governance",
+                                   "vco/prompt-governance",
+                                   "vco/role-pack-governance",
+                                   "vco/skill-corpus"
+                               ]
+                },
+    "schema":  {
+                   "required_top_level_fields":  [
+                                                     "version",
+                                                     "updated",
+                                                     "governance_plane",
+                                                     "summary",
+                                                     "schema",
+                                                     "freshness_policy",
+                                                     "mirror_roots",
+                                                     "entries"
+                                                 ],
+                   "entry_required_fields":  [
+                                                 "slug",
+                                                 "repo_url",
+                                                 "default_branch",
+                                                 "license",
+                                                 "lane",
+                                                 "status",
+                                                 "owner",
+                                                 "integration_role",
+                                                 "next_action",
+                                                 "observed_head_sha"
+                                             ],
+                   "allowed_statuses":  [
+                                            "tracked_corpus",
+                                            "catalog_governed",
+                                            "shadow_governed",
+                                            "partial_absorption",
+                                            "canonical_contract"
+                                        ],
+                   "allowed_lanes":  [
+                                         "connector_admission",
+                                         "document_plane_contract",
+                                         "prompt_contract_source",
+                                         "role_pack_source",
+                                         "skill_catalog_source",
+                                         "discovery_eval_corpus",
+                                         "memory_policy_source",
+                                         "browserops_provider_source",
+                                         "desktopops_shadow_source"
+                                     ]
+               },
+    "freshness_policy":  {
+                             "head_source":  "observed_head_sha_from_2026-03-07_audit",
+                             "pass_rule":  "at_least_one_required_root_with_full_coverage_and_matching_heads",
+                             "warn_on_partial_live_root":  true,
+                             "allow_non_git_live_root":  true,
+                             "notes":  "Workspace live root currently exposes only a 4-project partial surface. The latest runtime backup root is the authoritative freshness baseline until the live mirror is resynced to all 15 projects."
+                         },
+    "mirror_roots":  [
+                         {
+                             "id":  "workspace_live",
+                             "path":  "../../third_party/vco-ecosystem-mirror",
+                             "role":  "working_mirror",
+                             "expected_entry_count":  15,
+                             "required_for_freshness_gate":  false
+                         },
+                         {
+                             "id":  "runtime_backup_20260307_140452",
+                             "path":  "../../.tmp/vco-runtime-backups/vibe-20260307-140452/third_party/vco-ecosystem-mirror",
+                             "role":  "freshness_baseline",
+                             "expected_entry_count":  15,
+                             "required_for_freshness_gate":  true
+                         }
+                     ],
+    "entries":  [
+                    {
+                        "slug":  "activepieces",
+                        "repo_url":  "https://github.com/activepieces/activepieces",
+                        "default_branch":  "main",
+                        "license":  "NOASSERTION",
+                        "lane":  "connector_admission",
+                        "status":  "shadow_governed",
+                        "owner":  "vco/connector-admission",
+                        "integration_role":  "connector-template source for bounded shadow admission",
+                        "next_action":  "Freeze piece categories into connector allowlist/denylist mapping and keep write actions confirm-gated.",
+                        "observed_head_sha":  "39c5db4804bf7dd83ca905386f0c660f69b9997e",
+                        "canonical_assets":  [
+                                                 "docs/connector-admission-governance.md",
+                                                 "references/connector-capability-matrix.md",
+                                                 "config/connector-admission-policy.json",
+                                                 "config/capability-catalog.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "agent-s",
+                        "repo_url":  "https://github.com/simular-ai/Agent-S",
+                        "default_branch":  "main",
+                        "license":  "Apache-2.0",
+                        "lane":  "desktopops_shadow_source",
+                        "status":  "shadow_governed",
+                        "owner":  "vco/desktopops",
+                        "integration_role":  "desktop shadow contract and replay-source reference",
+                        "next_action":  "Keep Agent-S in shadow-first posture and distill replay / failure-handling improvements into DesktopOps contracts only.",
+                        "observed_head_sha":  "HEAD_FROM_UPSTREAM_LOCK",
+                        "canonical_assets":  [
+                                                 "docs/desktopops-soft-rollout-governance.md",
+                                                 "docs/desktopops-replay-governance.md",
+                                                 "config/desktopops-shadow-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "agent-squad",
+                        "repo_url":  "https://github.com/awslabs/agent-squad",
+                        "default_branch":  "main",
+                        "license":  "Apache-2.0",
+                        "lane":  "role_pack_source",
+                        "status":  "tracked_corpus",
+                        "owner":  "vco/role-pack-governance",
+                        "integration_role":  "role-pack reference for multi-agent delegation patterns",
+                        "next_action":  "Extract reusable role vocabulary without importing a second orchestrator.",
+                        "observed_head_sha":  "8048bcf308fcc5f5768a9c2d4c3f139b0e81f4e6",
+                        "canonical_assets":  [
+                                                 "docs/role-pack-governance.md",
+                                                 "docs/role-pack-distillation-governance.md",
+                                                 "references/role-pack-catalog.md",
+                                                 "config/role-pack-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "antigravity-awesome-skills",
+                        "repo_url":  "https://github.com/sickn33/antigravity-awesome-skills",
+                        "default_branch":  "main",
+                        "license":  "MIT",
+                        "lane":  "skill_catalog_source",
+                        "status":  "partial_absorption",
+                        "owner":  "vco/skill-corpus",
+                        "integration_role":  "skill harvest source with existing selective downstream reuse",
+                        "next_action":  "Keep upstream mirrored and promote only proven skills into canonical bundles.",
+                        "observed_head_sha":  "60ed44edef8a3c6c53a0818fa06a9b987cc15fbd",
+                        "canonical_assets":  [
+                                                 "docs/role-pack-distillation-governance.md",
+                                                 "references/skill-distillation-rules.md",
+                                                 "config/role-pack-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "awesome-agent-skills",
+                        "repo_url":  "https://github.com/VoltAgent/awesome-agent-skills",
+                        "default_branch":  "main",
+                        "license":  "MIT",
+                        "lane":  "skill_catalog_source",
+                        "status":  "tracked_corpus",
+                        "owner":  "vco/skill-corpus",
+                        "integration_role":  "agent skill catalog reference",
+                        "next_action":  "Review agent skill cards for reusable high-signal patterns before bundling.",
+                        "observed_head_sha":  "602fa0062ac65f28dd0326800b23ec19b49e8a32",
+                        "canonical_assets":  [
+                                                 "docs/role-pack-governance.md",
+                                                 "references/role-pack-catalog.md",
+                                                 "config/role-pack-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "awesome-ai-agents-e2b",
+                        "repo_url":  "https://github.com/e2b-dev/awesome-ai-agents",
+                        "default_branch":  "main",
+                        "license":  "NOASSERTION",
+                        "lane":  "discovery_eval_corpus",
+                        "status":  "tracked_corpus",
+                        "owner":  "vco/discovery-corpus",
+                        "integration_role":  "discovery and evaluation example corpus",
+                        "next_action":  "Mine eval and agent examples into discovery notes rather than runtime ownership.",
+                        "observed_head_sha":  "6af02e9230dae8a155fe6e49526dd309c04120b7",
+                        "canonical_assets":  [
+                                                 "docs/discovery-eval-corpus-governance.md",
+                                                 "docs/upstream-eval-pilot-scenarios.md",
+                                                 "references/capability-catalog.md",
+                                                 "config/capability-catalog.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "awesome-ai-tools",
+                        "repo_url":  "https://github.com/mahseema/awesome-ai-tools",
+                        "default_branch":  "main",
+                        "license":  "MIT",
+                        "lane":  "discovery_eval_corpus",
+                        "status":  "tracked_corpus",
+                        "owner":  "vco/discovery-corpus",
+                        "integration_role":  "ecosystem discovery list",
+                        "next_action":  "Use as discovery feed only; do not expose it as a runtime surface.",
+                        "observed_head_sha":  "9d8b9d49fa26114fcc635a80ac1db1e950d3542a",
+                        "canonical_assets":  [
+                                                 "docs/discovery-eval-corpus-governance.md",
+                                                 "docs/upstream-eval-pilot-scenarios.md",
+                                                 "references/capability-catalog.md",
+                                                 "config/capability-catalog.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "awesome-claude-code-subagents",
+                        "repo_url":  "https://github.com/VoltAgent/awesome-claude-code-subagents",
+                        "default_branch":  "main",
+                        "license":  "MIT",
+                        "lane":  "role_pack_source",
+                        "status":  "tracked_corpus",
+                        "owner":  "vco/role-pack-governance",
+                        "integration_role":  "subagent role topology reference",
+                        "next_action":  "Review subagent layouts for XL patterns without replacing VCO control plane.",
+                        "observed_head_sha":  "87321636a1c666283d8f17398b45c2644395044b",
+                        "canonical_assets":  [
+                                                 "docs/role-pack-distillation-governance.md",
+                                                 "references/role-pack-catalog.md",
+                                                 "config/role-pack-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "awesome-claude-skills-composio",
+                        "repo_url":  "https://github.com/ComposioHQ/awesome-claude-skills",
+                        "default_branch":  "master",
+                        "license":  "NOASSERTION",
+                        "lane":  "skill_catalog_source",
+                        "status":  "partial_absorption",
+                        "owner":  "vco/skill-corpus",
+                        "integration_role":  "skill catalog with selective canonical harvesting",
+                        "next_action":  "Continue selective skill harvesting under canonical pack routing and connector guardrails.",
+                        "observed_head_sha":  "27904475d1270d8395acf07691966267d5abda2d",
+                        "canonical_assets":  [
+                                                 "docs/upstream-corpus-governance.md",
+                                                 "references/capability-catalog.md",
+                                                 "config/capability-catalog.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "awesome-mcp-servers",
+                        "repo_url":  "https://github.com/punkpeye/awesome-mcp-servers",
+                        "default_branch":  "main",
+                        "license":  "MIT",
+                        "lane":  "connector_admission",
+                        "status":  "catalog_governed",
+                        "owner":  "vco/connector-admission",
+                        "integration_role":  "catalog reference for connector scouting only",
+                        "next_action":  "Curate catalog snapshots into the connector admission allowlist; never auto-install from the catalog.",
+                        "observed_head_sha":  "bc51fe0af7d4f5f2c656ce46e8f04d8e694e3a92",
+                        "canonical_assets":  [
+                                                 "docs/connector-admission-governance.md",
+                                                 "references/connector-capability-matrix.md",
+                                                 "config/connector-admission-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "awesome-vibe-coding",
+                        "repo_url":  "https://github.com/filipecalegario/awesome-vibe-coding",
+                        "default_branch":  "main",
+                        "license":  "CC0-1.0",
+                        "lane":  "discovery_eval_corpus",
+                        "status":  "tracked_corpus",
+                        "owner":  "vco/discovery-corpus",
+                        "integration_role":  "workflow discovery corpus",
+                        "next_action":  "Harvest workflow references into discovery and eval notes only.",
+                        "observed_head_sha":  "e6a746a3950b0761a562e842822bcea03e8fb842",
+                        "canonical_assets":  [
+                                                 "docs/discovery-eval-corpus-governance.md",
+                                                 "docs/upstream-eval-pilot-scenarios.md",
+                                                 "references/capability-catalog.md"
+                                             ]
+                    },
+                    {
+                        "slug":  "browser-use",
+                        "repo_url":  "https://github.com/browser-use/browser-use",
+                        "default_branch":  "main",
+                        "license":  "MIT",
+                        "lane":  "browserops_provider_source",
+                        "status":  "shadow_governed",
+                        "owner":  "vco/browserops",
+                        "integration_role":  "browser provider candidate and open-world browsing evaluation source",
+                        "next_action":  "Retain browser-use as an advice/shadow-first provider candidate and keep provider takeover forbidden.",
+                        "observed_head_sha":  "HEAD_FROM_UPSTREAM_LOCK",
+                        "canonical_assets":  [
+                                                 "docs/browserops-soft-rollout-governance.md",
+                                                 "docs/browserops-provider-integration.md",
+                                                 "config/browserops-provider-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "claude-skills",
+                        "repo_url":  "https://github.com/Jeffallan/claude-skills",
+                        "default_branch":  "main",
+                        "license":  "MIT",
+                        "lane":  "skill_catalog_source",
+                        "status":  "partial_absorption",
+                        "owner":  "vco/skill-corpus",
+                        "integration_role":  "upstream inspiration library with partial downstream reuse",
+                        "next_action":  "Import only contract-compatible skill fragments and keep the rest mirrored as reference.",
+                        "observed_head_sha":  "be4e1e265c3252b13618cfbc030935634ec837f7",
+                        "canonical_assets":  [
+                                                 "docs/role-pack-distillation-governance.md",
+                                                 "references/skill-distillation-rules.md",
+                                                 "config/role-pack-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "composio",
+                        "repo_url":  "https://github.com/ComposioHQ/composio",
+                        "default_branch":  "next",
+                        "license":  "MIT",
+                        "lane":  "connector_admission",
+                        "status":  "shadow_governed",
+                        "owner":  "vco/connector-admission",
+                        "integration_role":  "provider candidate for connector templates and action surfaces",
+                        "next_action":  "Map connector templates to risk classes and secret profiles before any promotion.",
+                        "observed_head_sha":  "7831d2c58309f57e31da280c989539baeb48c449",
+                        "canonical_assets":  [
+                                                 "docs/connector-admission-governance.md",
+                                                 "references/connector-capability-matrix.md",
+                                                 "config/connector-admission-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "docling",
+                        "repo_url":  "https://github.com/docling-project/docling",
+                        "default_branch":  "main",
+                        "license":  "MIT",
+                        "lane":  "document_plane_contract",
+                        "status":  "canonical_contract",
+                        "owner":  "vco/document-plane",
+                        "integration_role":  "document plane primary contract source",
+                        "next_action":  "Sync the canonical contract, provider policy, and recovered spec into packaged mirrors after gate pass.",
+                        "observed_head_sha":  "752f81b3dd451208fb59297ea5ef7917cb4fc891",
+                        "canonical_assets":  [
+                                                 "docs/docling-document-plane-integration.md",
+                                                 "references/docling-output-spec.md",
+                                                 "config/docling-provider-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "letta",
+                        "repo_url":  "https://github.com/letta-ai/letta",
+                        "default_branch":  "main",
+                        "license":  "Apache-2.0",
+                        "lane":  "memory_policy_source",
+                        "status":  "partial_absorption",
+                        "owner":  "vco/memory-governance",
+                        "integration_role":  "memory-policy vocabulary and conformance contract source",
+                        "next_action":  "Keep Letta as a policy / vocabulary source only and convert remaining retention / conformance slices into auditable eval assets.",
+                        "observed_head_sha":  "HEAD_FROM_UPSTREAM_LOCK",
+                        "canonical_assets":  [
+                                                 "docs/letta-policy-conformance.md",
+                                                 "docs/letta-policy-integration.md",
+                                                 "config/letta-governance-contract.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "mem0",
+                        "repo_url":  "https://github.com/mem0ai/mem0",
+                        "default_branch":  "main",
+                        "license":  "Apache-2.0",
+                        "lane":  "memory_policy_source",
+                        "status":  "shadow_governed",
+                        "owner":  "vco/memory-governance",
+                        "integration_role":  "optional preference-memory backend candidate under single-owner memory governance",
+                        "next_action":  "Keep mem0 opt-in and replayable, never as canonical session or project truth-source.",
+                        "observed_head_sha":  "HEAD_FROM_UPSTREAM_LOCK",
+                        "canonical_assets":  [
+                                                 "docs/mem0-soft-rollout-governance.md",
+                                                 "docs/mem0-optin-backend-integration.md",
+                                                 "config/mem0-backend-policy.json"
+                                             ]
+                    },
+                    {
+                        "slug":  "prompt-engineering-guide",
+                        "repo_url":  "https://github.com/dair-ai/Prompt-Engineering-Guide",
+                        "default_branch":  "main",
+                        "license":  "MIT",
+                        "lane":  "prompt_contract_source",
+                        "status":  "partial_absorption",
+                        "owner":  "vco/prompt-governance",
+                        "integration_role":  "prompt governance source for pattern cards and review heuristics",
+                        "next_action":  "Convert stable prompt patterns into canonical cards and risk review checklists.",
+                        "observed_head_sha":  "1d08f3a4cd0d2b95b402f18e7b164b5537c27f51",
+                        "canonical_assets":  [
+                                                 "docs/prompt-intelligence-governance.md",
+                                                 "references/prompt-pattern-cards.md",
+                                                 "references/prompt-risk-checklist.md"
+                                             ]
+                    },
+                    {
+                        "slug":  "vibe-coding-cn",
+                        "repo_url":  "https://github.com/tukuaiai/vibe-coding-cn",
+                        "default_branch":  "develop",
+                        "license":  "MIT",
+                        "lane":  "discovery_eval_corpus",
+                        "status":  "tracked_corpus",
+                        "owner":  "vco/discovery-corpus",
+                        "integration_role":  "multilingual vibe-coding discovery corpus",
+                        "next_action":  "Keep as multilingual discovery corpus and summarize patterns instead of promoting it into runtime ownership.",
+                        "observed_head_sha":  "a21b26645e75c86b636d61bbb4975afd4a33684b",
+                        "canonical_assets":  [
+                                                 "docs/discovery-eval-corpus-governance.md",
+                                                 "docs/upstream-eval-pilot-scenarios.md",
+                                                 "references/capability-catalog.md"
+                                             ]
+                    }
+                ],
+    "runtime_mirror_root":  "C:/Users/羽裳/.codex/skills/vibe/third_party/vco-ecosystem-mirror",
+    "alias_config":  "config/upstream-source-aliases.json"
+}

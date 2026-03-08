@@ -260,14 +260,13 @@
                       "trigger_keywords":  [
                                                "flashrag",
                                                "webthinker",
-                                               "deepagent",
-                                               "ruc-nlpir",
-                                               "RUC-NLPIR",
-                                               "evidence plane",
-                                               "deep research",
-                                               "trace.jsonl",
-                                               "sources.json",
-                                               "toolchain",
+                                                "deepagent",
+                                                "ruc-nlpir",
+                                                "evidence plane",
+                                                "deep research",
+                                                "trace.jsonl",
+                                                "sources.json",
+                                                "toolchain",
                                                "skill chain",
                                                "memory folding",
                                                "证据平面",
@@ -711,6 +710,61 @@
                                                "research":  "infographics"
                                            }
                   },
+                  {
+                      "id":  "web-scraping",
+                      "priority":  86,
+                      "grade_allow":  [
+                                          "M",
+                                          "L",
+                                          "XL"
+                                      ],
+                      "task_allow":  [
+                                         "coding",
+                                         "research",
+                                         "debug"
+                                     ],
+                      "trigger_keywords":  [
+                                               "scrapling",
+                                               "scrape",
+                                               "scraping",
+                                               "web scraping",
+                                               "scraper",
+                                               "crawl",
+                                               "crawler",
+                                               "spider",
+                                               "html parse",
+                                               "parse html",
+                                               "css selector",
+                                               "xpath",
+                                               "cloudflare",
+                                               "turnstile",
+                                               "captcha",
+                                               "anti-bot",
+                                               "headless browser",
+                                               "爬虫",
+                                               "抓取",
+                                               "采集",
+                                               "网页抓取",
+                                               "网页采集",
+                                               "反爬",
+                                               "验证码",
+                                               "无头浏览器",
+                                               "解析HTML",
+                                               "选择器",
+                                               "XPath",
+                                               "Cloudflare",
+                                               "Turnstile"
+                                           ],
+                      "skill_candidates":  [
+                                               "scrapling",
+                                               "playwright"
+                                           ],
+                      "defaults_by_task":  {
+                                               "coding":  "scrapling",
+                                               "research":  "scrapling",
+                                               "debug":  "playwright"
+                                           }
+                  },
                     {
                         "id":  "docs-media",
                         "priority":  85,
@@ -746,15 +800,14 @@
                                                 "文字转录",
                                                 "批注",
                                                 "回复批注",
-                                                "word批注",
-                                                "评论线程",
-                                                "comments.xml",
-                                                "commentsextended.xml",
-                                                "commentsExtended.xml"
-                                            ],
-                       "skill_candidates":  [
-                                                "content-research-writer",
-                                                "doc",
+                                                 "word批注",
+                                                 "评论线程",
+                                                 "comments.xml",
+                                                 "commentsExtended.xml"
+                                             ],
+                        "skill_candidates":  [
+                                                 "content-research-writer",
+                                                 "doc",
                                                 "docs-review",
                                                 "docs-write",
                                                 "docx",

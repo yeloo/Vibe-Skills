@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "updated_at": "2026-03-08",
+  "policy": "canonical_slug_registry",
+  "canonical_form": "lower-kebab-case",
+  "aliases": {
+    "Letta": "letta",
+    "letta-ai/letta": "letta",
+    "Agent-S": "agent-s",
+    "simular-ai/Agent-S": "agent-s",
+    "Prompt-Engineering-Guide": "prompt-engineering-guide",
+    "dair-ai/Prompt-Engineering-Guide": "prompt-engineering-guide",
+    "mem0ai/mem0": "mem0",
+    "browser-use/browser-use": "browser-use",
+    "browser_use": "browser-use",
+    "e2b awesome-ai-agents": "awesome-ai-agents-e2b",
+    "e2b-dev/awesome-ai-agents": "awesome-ai-agents-e2b"
+  }
+}

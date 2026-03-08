@@ -1,5 +1,44 @@
 # VCO Changelog
 
+## 2026-03-09 — Batch0-9 cleanup closure update
+
+- 完成 `docs/plans/2026-03-08-repo-full-cleanup-master-plan.md` 下 Batch 0-9 的一次执行收口，并新增 tracked 报告：`docs/plans/2026-03-09-batch0-9-closure-report.md`。
+- 修复 `scripts/governance/export-repo-cleanliness-inventory.ps1` 的 artifact 渲染解析错误，使 cleanliness inventory operator 可稳定执行。
+- 新增 `.gitattributes`，补强 `.gitignore` / `config/index.md` / `third_party/README.md` / docs-references-scripts family spine，并把 `.gitattributes` 与 `third_party/` 纳入 `config/repo-cleanliness-policy.json` 的治理面。
+- 修复 `check.sh` 的 UTF-8 BOM 风险，并完成 canonical -> bundled -> nested sync；同时复跑 installed runtime install/freshness/coherence 流程。
+- 关键门禁全部通过：repo-cleanliness、output-artifact-boundary、bom-frontmatter、mirror-edit-hygiene、nested-bundled-parity、version-packaging、installed-runtime-freshness、release-install-runtime-coherence。
+- 说明：这是一轮 cleanup / governance closure，不是新的 release cut；Batch 3 的 canonical workset admission / commit closure 仍保留为下一步 backlog（见 docs/plans/2026-03-09-batch0-9-closure-report.md）。
+
+## v2.3.30 (2026-03-07)
+
+- 完成 Wave31-33 的镜像 / 运行态治理收口：
+  - `mirror_topology.targets` 成为显式 canonical 合同；新增 `vibe-nested-bundled-parity-gate.ps1`、`vibe-mirror-edit-hygiene-gate.ps1`、`vibe-release-install-runtime-coherence-gate.ps1`。
+  - release / install / runtime freshness 边界被正式写入 `config/version-governance.json` 与 `docs/version-packaging-governance.md`。
+- 完成 Wave34 的 upstream corpus 治理：
+  - 新增 `config/upstream-corpus-manifest.json`、`references/upstream-value-ledger.md`、`docs/upstream-corpus-governance.md`，把 15 个 upstream 项目正式登记进 canonical corpus。
+- 完成 Wave35-38 的能力产品化收口：
+  - `docling` 固定为 document-plane canonical contract。
+  - connector 生态固定为 connector admission layer，而不是新的 route owner。
+  - role-pack / skill distillation 固定为治理输入层，而不是第二 orchestrator。
+  - discovery / eval corpus 与 capability catalog 被纳入正式 reference / config / gate 体系。
+- 完成 Wave39 的 promotion / release closure：
+  - promotion board 扩展覆盖 Wave31-38 新治理条目。
+  - 新增 `pilot-deep-extraction.json` / `vibe-deep-extraction-pilot-gate.ps1`，把 mirror/runtime/corpus/productization 收口指标并入 release 证据链。
+  - 详细说明（release notes）：`docs/releases/v2.3.30.md`。
+## v2.3.29 (2026-03-07)
+
+- 完成 Wave19-23 的 memory / prompt absorption 收口：
+  - `mem0` 固定为可选 preference backend，`Letta` 固定为 policy contract 来源，prompt intelligence 只增强资产层，不形成第二 router。
+- 完成 Wave24-25 的执行平面吸收：
+  - BrowserOps 以 provider governance 吸收 `browser-use`，DesktopOps 以 shadow contract 吸收 Agent-S，并保持 `advice-first / shadow-first / rollback-first`。
+- 完成 Wave26-28 的治理闭环：
+  - 新增 cross-plane conflict policy、promotion board 与 `pilot-*.json` 试点评估体系。
+- 完成 Wave29-30 的发布收口：
+  - canonical / bundled 镜像重新同步，清理退役 `*-shadow.json` pilot 旧命名。
+  - `memory-runtime-v2`、`prompt-intelligence`、`browserops-provider`、`desktopops-shadow` 已由 `shadow` 显式写入 `soft`。
+  - 详细说明（release notes）：`docs/releases/v2.3.29.md`。
+
+
 ## v2.3.28 (2026-03-05)
 
 - TurboMax（方案 A：API 换时间）能力补齐：
@@ -533,7 +572,7 @@
 
 ## v2.3.4 (2026-02-25)
 
-- 新增 prompts.chat Prompt 资产增强层（post-route overlay，不替代 Pack 路由）：  
+- 新增 prompts.chat Prompt 资产增强层（post-route overlay，不替代 Pack 路由）：
   - 新增配置（main + bundled）：
     - `config/prompt-overlay.json`
     - `bundled/skills/vibe/config/prompt-overlay.json`

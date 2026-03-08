@@ -1,19 +1,46 @@
-# Runtime outputs (generated during routing/verification)
+# Runtime outputs
+# Only the legacy allowlisted tracked outputs declared in `config/outputs-boundary-policy.json` may remain tracked.
+# Everything else under `outputs/**` is generated and must stay untracked.
 outputs/
 **/outputs/
 **/telemetry/
+
+# Local operator / tool state
+.serena/
+.tmp/
+
+# MCP local machine config (keep templates tracked)
+mcp/servers.json
+mcp/servers.local.json
+mcp/servers.private.json
+mcp/servers.*.local.json
+mcp/profiles/*.local.json
+mcp/profiles/*.private.json
 
 # OS / editor noise
 .DS_Store
 Thumbs.db
 Desktop.ini
+.vscode/
+.idea/
 
 # Python
 __pycache__/
 *.pyc
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
 
 # Node
 node_modules/
+
+# Logs
+logs/
+*.log
 
 # Local env files
 .env

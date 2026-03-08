@@ -1,112 +1,214 @@
 param(
-    [switch]$PruneBundledExtras
+    [switch]$PruneBundledExtras,
+    [switch]$Preview,
+    [string]$PreviewOutputPath = ''
 )
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '..\common\vibe-governance-helpers.ps1')
 
 function Copy-DirContent {
     param(
-        [string]$Source,
-        [string]$Destination
+        [Parameter(Mandatory)] [string]$Source,
+        [Parameter(Mandatory)] [string]$Destination
     )
 
-    if (-not (Test-Path -LiteralPath $Source)) { return }
+    if (-not (Test-Path -LiteralPath $Source)) {
+        return
+    }
+
     New-Item -ItemType Directory -Force -Path $Destination | Out-Null
     Copy-Item -Path (Join-Path $Source '*') -Destination $Destination -Recurse -Force
 }
 
-function Get-RelativePathPortable {
+function Add-PreviewAction {
     param(
-        [string]$BasePath,
-        [string]$TargetPath
+        [System.Collections.Generic.List[object]]$Collection,
+        [string]$Type,
+        [string]$TargetId,
+        [string]$RelativePath,
+        [string]$Message
     )
 
-    $baseFull = [System.IO.Path]::GetFullPath($BasePath)
-    $targetFull = [System.IO.Path]::GetFullPath($TargetPath)
-    if (-not $baseFull.EndsWith([System.IO.Path]::DirectorySeparatorChar)) {
-        $baseFull = $baseFull + [System.IO.Path]::DirectorySeparatorChar
+    $Collection.Add([pscustomobject]@{
+        type = $Type
+        target_id = $TargetId
+        relative_path = $RelativePath
+        message = $Message
+    }) | Out-Null
+}
+
+function Get-PreviewReceiptPath {
+    param(
+        [string]$CanonicalRoot,
+        [string]$RequestedPath,
+        [psobject]$Contract
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($RequestedPath)) {
+        return $RequestedPath
     }
-    if ($targetFull.StartsWith($baseFull, [System.StringComparison]::OrdinalIgnoreCase)) {
-        return $targetFull.Substring($baseFull.Length).Replace("\", "/")
+
+    $root = if ($null -ne $Contract -and $Contract.PSObject.Properties.Name -contains 'preview_output_root') {
+        [string]$Contract.preview_output_root
+    } else {
+        'outputs/governance/preview'
     }
-
-    $baseUri = New-Object System.Uri($baseFull)
-    $targetUri = New-Object System.Uri($targetFull)
-    return [System.Uri]::UnescapeDataString($baseUri.MakeRelativeUri($targetUri).ToString()).Replace("\", "/")
+    return Join-Path $CanonicalRoot (Join-Path $root 'sync-bundled-vibe.json')
 }
 
-$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-$governancePath = Join-Path $repoRoot "config\version-governance.json"
-if (-not (Test-Path -LiteralPath $governancePath)) {
-    throw "version governance config not found: $governancePath"
+$context = Get-VgoGovernanceContext -ScriptPath $PSCommandPath -EnforceExecutionContext
+$canonicalRoot = $context.canonicalRoot
+$packaging = $context.packaging
+$mirrorFiles = @($packaging.mirror.files)
+$mirrorDirs = @($packaging.mirror.directories)
+$allowBundledOnly = @($packaging.allow_bundled_only)
+$syncTargets = @(
+    $context.mirrorTargets | Where-Object {
+        -not $_.isCanonical -and $_.sync_enabled
+    }
+)
+$previewContractPath = Join-Path $canonicalRoot 'config/operator-preview-contract.json'
+$previewContract = if (Test-Path -LiteralPath $previewContractPath) {
+    Get-Content -LiteralPath $previewContractPath -Raw -Encoding UTF8 | ConvertFrom-Json
+} else {
+    $null
 }
+$previewActions = [System.Collections.Generic.List[object]]::new()
 
-$governance = Get-Content -LiteralPath $governancePath -Raw -Encoding UTF8 | ConvertFrom-Json
-$canonicalRoot = Join-Path $repoRoot ([string]$governance.source_of_truth.canonical_root)
-$bundledRoot = Join-Path $repoRoot ([string]$governance.source_of_truth.bundled_root)
-$nestedBundledRoot = Join-Path $bundledRoot "bundled\skills\vibe"
-$mirrorFiles = @($governance.packaging.mirror.files)
-$mirrorDirs = @($governance.packaging.mirror.directories)
-$allowBundledOnly = @($governance.packaging.allow_bundled_only)
+function Sync-ToMirrorTarget {
+    param(
+        [Parameter(Mandatory)] [psobject]$Target
+    )
 
-Write-Host "=== Sync Bundled Vibe ===" -ForegroundColor Cyan
-Write-Host ("Canonical root: {0}" -f $canonicalRoot)
-Write-Host ("Bundled root  : {0}" -f $bundledRoot)
-if (Test-Path -LiteralPath $nestedBundledRoot) {
-    Write-Host ("Nested root   : {0}" -f $nestedBundledRoot)
-}
-
-function Sync-ToBundledRoot {
-    param([string]$TargetRoot)
+    $targetRoot = [string]$Target.fullPath
+    $shouldCreate = [bool]$Target.required -or ([string]$Target.presence_policy -eq 'required')
+    $targetExists = Test-Path -LiteralPath $targetRoot
+    if (-not $targetExists) {
+        if ($shouldCreate) {
+            if ($Preview) {
+                Add-PreviewAction -Collection $previewActions -Type 'create-target' -TargetId ([string]$Target.id) -RelativePath '.' -Message ('would create mirror root ' + $targetRoot)
+            } else {
+                New-Item -ItemType Directory -Force -Path $targetRoot | Out-Null
+                Write-Host ("[CREATE] {0} -> {1}" -f $Target.id, $targetRoot)
+            }
+        } else {
+            $message = ("skip missing optional target {0} ({1})" -f $Target.id, $Target.presence_policy)
+            if ($Preview) {
+                Add-PreviewAction -Collection $previewActions -Type 'skip-target' -TargetId ([string]$Target.id) -RelativePath '.' -Message $message
+            } else {
+                Write-Host ("[SKIP] {0} missing and policy is {1}" -f $Target.id, $Target.presence_policy) -ForegroundColor Yellow
+            }
+            return
+        }
+    }
 
     foreach ($rel in $mirrorFiles) {
-        $src = Join-Path $canonicalRoot $rel
-        $dst = Join-Path $TargetRoot $rel
-        if (-not (Test-Path -LiteralPath $src)) {
-            Write-Warning ("Skip missing canonical file: {0}" -f $rel)
+        $sourcePath = Join-Path $canonicalRoot $rel
+        $targetPath = Join-Path $targetRoot $rel
+        if (-not (Test-Path -LiteralPath $sourcePath)) {
+            if (-not $Preview) {
+                Write-Warning ("Skip missing canonical file: {0}" -f $rel)
+            }
             continue
         }
-        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dst) | Out-Null
-        Copy-Item -LiteralPath $src -Destination $dst -Force
-        Write-Host ("[SYNC] file {0} -> {1}" -f $rel, $TargetRoot)
+
+        $targetDir = Split-Path -Parent $targetPath
+        if ($Preview) {
+            Add-PreviewAction -Collection $previewActions -Type 'sync-file' -TargetId ([string]$Target.id) -RelativePath $rel -Message ('would sync file to ' + $targetPath)
+        } else {
+            if (-not [string]::IsNullOrWhiteSpace($targetDir)) {
+                New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
+            }
+            Copy-Item -LiteralPath $sourcePath -Destination $targetPath -Force
+            Write-Host ("[SYNC] {0} file {1}" -f $Target.id, $rel)
+        }
     }
 
     foreach ($dir in $mirrorDirs) {
-        $srcDir = Join-Path $canonicalRoot $dir
-        $dstDir = Join-Path $TargetRoot $dir
-        if (-not (Test-Path -LiteralPath $srcDir)) {
-            Write-Warning ("Skip missing canonical dir: {0}" -f $dir)
+        $sourceDir = Join-Path $canonicalRoot $dir
+        $targetDir = Join-Path $targetRoot $dir
+        if (-not (Test-Path -LiteralPath $sourceDir)) {
+            if (-not $Preview) {
+                Write-Warning ("Skip missing canonical dir: {0}" -f $dir)
+            }
             continue
         }
-        Copy-DirContent -Source $srcDir -Destination $dstDir
-        Write-Host ("[SYNC] dir  {0} -> {1}" -f $dir, $TargetRoot)
 
-        if ($PruneBundledExtras) {
-            $srcFiles = @(
-                Get-ChildItem -LiteralPath $srcDir -Recurse -File | ForEach-Object {
-                    Get-RelativePathPortable -BasePath $srcDir -TargetPath $_.FullName
-                }
-            )
-            $dstFiles = @(
-                Get-ChildItem -LiteralPath $dstDir -Recurse -File | ForEach-Object {
-                    Get-RelativePathPortable -BasePath $dstDir -TargetPath $_.FullName
-                }
-            )
+        if ($Preview) {
+            Add-PreviewAction -Collection $previewActions -Type 'sync-dir' -TargetId ([string]$Target.id) -RelativePath $dir -Message ('would sync directory to ' + $targetDir)
+        } else {
+            Copy-DirContent -Source $sourceDir -Destination $targetDir
+            Write-Host ("[SYNC] {0} dir {1}" -f $Target.id, $dir)
+        }
 
-            foreach ($relPath in @($dstFiles | Where-Object { $_ -notin $srcFiles })) {
-                $allowRel = "{0}/{1}" -f $dir, $relPath
-                if ($allowBundledOnly -contains $allowRel) { continue }
-                $target = Join-Path $dstDir $relPath
-                Remove-Item -LiteralPath $target -Force -ErrorAction SilentlyContinue
-                Write-Host ("[PRUNE] {0} -> {1}" -f $allowRel, $TargetRoot)
+        if ($PruneBundledExtras -and (Test-Path -LiteralPath $targetDir)) {
+            $sourceFiles = Get-VgoRelativeFileList -RootPath $sourceDir
+            $targetFiles = Get-VgoRelativeFileList -RootPath $targetDir
+            foreach ($relPath in @($targetFiles | Where-Object { $_ -notin $sourceFiles })) {
+                $allowRel = ('{0}/{1}' -f $dir, $relPath).Replace('\', '/')
+                if ($allowBundledOnly -contains $allowRel) {
+                    continue
+                }
+
+                $candidatePath = Join-Path $targetDir $relPath
+                if ($Preview) {
+                    Add-PreviewAction -Collection $previewActions -Type 'prune-file' -TargetId ([string]$Target.id) -RelativePath $allowRel -Message ('would prune extra bundled file ' + $candidatePath)
+                } elseif (Test-Path -LiteralPath $candidatePath) {
+                    Remove-Item -LiteralPath $candidatePath -Force -ErrorAction SilentlyContinue
+                    Write-Host ("[PRUNE] {0} {1}" -f $Target.id, $allowRel)
+                }
             }
         }
     }
 }
 
-Sync-ToBundledRoot -TargetRoot $bundledRoot
-if (Test-Path -LiteralPath $nestedBundledRoot) {
-    Sync-ToBundledRoot -TargetRoot $nestedBundledRoot
+Write-Host '=== Sync Bundled Vibe ===' -ForegroundColor Cyan
+Write-Host ("Canonical root : {0}" -f $canonicalRoot)
+Write-Host ("Sync source    : {0}" -f $context.syncSourceTarget.id)
+foreach ($target in $syncTargets) {
+    Write-Host ("Mirror target  : {0} -> {1} [{2}]" -f $target.id, $target.fullPath, $target.presence_policy)
+}
+Write-Host ''
+
+foreach ($target in $syncTargets) {
+    Sync-ToMirrorTarget -Target $target
 }
 
-Write-Host "Sync complete." -ForegroundColor Green
+if ($Preview) {
+    $receiptPath = Get-PreviewReceiptPath -CanonicalRoot $canonicalRoot -RequestedPath $PreviewOutputPath -Contract $previewContract
+    $receipt = [ordered]@{
+        operator = 'sync-bundled-vibe'
+        contract_version = if ($null -ne $previewContract -and $previewContract.PSObject.Properties.Name -contains 'contract_version') { $previewContract.contract_version } else { 1 }
+        mode = 'preview'
+        precheck = [ordered]@{
+            canonical_root = $canonicalRoot
+            canonical_target_id = $context.canonicalTarget.id
+            sync_source_target_id = $context.syncSourceTarget.id
+            prune_bundled_extras = [bool]$PruneBundledExtras
+            mirror_targets = @($syncTargets | ForEach-Object {
+                [ordered]@{
+                    id = $_.id
+                    full_path = $_.fullPath
+                    presence_policy = $_.presence_policy
+                }
+            })
+        }
+        preview = [ordered]@{
+            generated_at = (Get-Date).ToString('s')
+            action_count = $previewActions.Count
+            planned_actions = @($previewActions)
+        }
+        postcheck = [ordered]@{
+            verify_after_apply = @(
+                'scripts/verify/vibe-mirror-edit-hygiene-gate.ps1',
+                'scripts/verify/vibe-nested-bundled-parity-gate.ps1'
+            )
+        }
+    }
+    Write-VgoUtf8NoBomText -Path $receiptPath -Content ($receipt | ConvertTo-Json -Depth 100)
+    Write-Host ("Preview receipt written: {0}" -f $receiptPath) -ForegroundColor Yellow
+    return
+}
+
+Write-Host 'Sync complete.' -ForegroundColor Green

@@ -385,3 +385,33 @@ Limitations vs XL: no intra-group dialogue (only 1 agent per perspective), no Ph
 - Ralph-loop and active team orchestration are mutually exclusive
 - Only one team active per project at a time
 - Prefer native agent communication via `send_input`
+
+## BrowserOps / DesktopOps Governance Hooks
+
+在 Wave24–30 之后，XL 团队执行涉及真实浏览器或 open-world GUI 任务时，必须额外遵守以下边界：
+
+- BrowserOps 只通过 provider policy 建议 `API / Playwright / Chrome / TuriX-CUA / browser-use`，不得绕开 VCO 主路由。
+- DesktopOps 只允许以 `shadow/advisory/contract` 形式吸收 `Agent-S` 思路，不得把任何外部桌面代理提升为默认执行 owner。
+- 若 BrowserOps / DesktopOps 建议与主计划冲突，优先服从 `references/conflict-rules.md` 与 cross-plane conflict policy。
+- 进入 soft/strict 之前，必须能提供对应 gate 与 rollback command。
+
+相关资产：
+- `docs/browserops-provider-integration.md`
+- `docs/agent-s-shadow-integration.md`
+- `docs/cross-plane-conflict-governance.md`
+- `docs/promotion-board-governance.md`
+
+## Wave19-30 Specialist Roles
+
+在 XL 多智能体执行中，Wave19-30 新增以下“治理型角色”，它们提供建议与验证，不接管 VCO 总编排：
+
+- **Memory Contract Steward**：检查 Memory Runtime v2、`mem0`、`Letta` 是否越权。
+- **Prompt Intelligence Steward**：检查 prompt cards / risk checklist 是否只停留在 advisory 层。
+- **BrowserOps Provider Steward**：负责 provider candidate 建议与 browser contract 校验。
+- **DesktopOps Shadow Steward**：负责 ACI/open-world 合同化，不允许默认 takeover。
+- **Promotion Board Steward**：负责 rollout evidence、blocking findings、rollback plan 汇总。
+
+团队规则：
+1. 治理型角色不能直接替代 implementer / reviewer / router。
+2. 任何角色给出的 promote 建议都必须经过 promotion board gate。
+3. 子代理的文件写入范围必须提前切分，避免互相覆盖。

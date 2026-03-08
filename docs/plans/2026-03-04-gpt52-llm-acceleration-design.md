@@ -1,6 +1,9 @@
 # GPT‑5.2 × VCO：LLM Acceleration Overlay 设计（/vibe 显式启用）
 
-日期：2026-03-04  
+- Up: [../README.md](../README.md)
+- Index: [README.md](README.md)
+
+日期：2026-03-04
 状态：Implemented（v1 + TurboMax 方案A 增强已落地）
 
 ---

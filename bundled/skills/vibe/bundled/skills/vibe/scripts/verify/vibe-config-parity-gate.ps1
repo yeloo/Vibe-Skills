@@ -173,8 +173,14 @@ function Assert-True {
     return $false
 }
 
-$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-
+. (Join-Path $PSScriptRoot "..\common\vibe-governance-helpers.ps1")
+$context = Get-VgoGovernanceContext -ScriptPath $PSCommandPath -EnforceExecutionContext
+$repoRoot = $context.repoRoot
+$governancePath = $context.governancePath
+$governance = $context.governance
+$canonicalRoot = $context.canonicalRoot
+$bundledRoot = $context.bundledRoot
+$nestedBundledRoot = $context.nestedBundledRoot
 $pairs = @(
     [pscustomobject]@{ id = "pack-manifest"; main = "config/pack-manifest.json"; bundled = "bundled/skills/vibe/config/pack-manifest.json" },
     [pscustomobject]@{ id = "router-thresholds"; main = "config/router-thresholds.json"; bundled = "bundled/skills/vibe/config/router-thresholds.json" },
@@ -205,7 +211,20 @@ $pairs = @(
     [pscustomobject]@{ id = "capability-catalog"; main = "config/capability-catalog.json"; bundled = "bundled/skills/vibe/config/capability-catalog.json" },
     [pscustomobject]@{ id = "dialectic-team-policy"; main = "config/dialectic-team-policy.json"; bundled = "bundled/skills/vibe/config/dialectic-team-policy.json" },
     [pscustomobject]@{ id = "daily-dialectic-guard"; main = "config/daily-dialectic-guard.json"; bundled = "bundled/skills/vibe/config/daily-dialectic-guard.json" },
-    [pscustomobject]@{ id = "llm-acceleration-policy"; main = "config/llm-acceleration-policy.json"; bundled = "bundled/skills/vibe/config/llm-acceleration-policy.json" }
+    [pscustomobject]@{ id = "llm-acceleration-policy"; main = "config/llm-acceleration-policy.json"; bundled = "bundled/skills/vibe/config/llm-acceleration-policy.json" },
+    [pscustomobject]@{ id = "browserops-provider-policy"; main = "config/browserops-provider-policy.json"; bundled = "bundled/skills/vibe/config/browserops-provider-policy.json" },
+    [pscustomobject]@{ id = "cross-plane-conflict-policy"; main = "config/cross-plane-conflict-policy.json"; bundled = "bundled/skills/vibe/config/cross-plane-conflict-policy.json" },
+    [pscustomobject]@{ id = "desktopops-shadow-policy"; main = "config/desktopops-shadow-policy.json"; bundled = "bundled/skills/vibe/config/desktopops-shadow-policy.json" },
+    [pscustomobject]@{ id = "mem0-backend-policy"; main = "config/mem0-backend-policy.json"; bundled = "bundled/skills/vibe/config/mem0-backend-policy.json" },
+    [pscustomobject]@{ id = "letta-governance-contract"; main = "config/letta-governance-contract.json"; bundled = "bundled/skills/vibe/config/letta-governance-contract.json" },
+    [pscustomobject]@{ id = "memory-tier-router"; main = "config/memory-tier-router.json"; bundled = "bundled/skills/vibe/config/memory-tier-router.json" },
+    [pscustomobject]@{ id = "prompt-intelligence-policy"; main = "config/prompt-intelligence-policy.json"; bundled = "bundled/skills/vibe/config/prompt-intelligence-policy.json" },
+    [pscustomobject]@{ id = "version-governance"; main = "config/version-governance.json"; bundled = "bundled/skills/vibe/config/version-governance.json" },
+    [pscustomobject]@{ id = "upstream-corpus-manifest"; main = "config/upstream-corpus-manifest.json"; bundled = "bundled/skills/vibe/config/upstream-corpus-manifest.json" },
+    [pscustomobject]@{ id = "docling-provider-policy"; main = "config/docling-provider-policy.json"; bundled = "bundled/skills/vibe/config/docling-provider-policy.json" },
+    [pscustomobject]@{ id = "connector-admission-policy"; main = "config/connector-admission-policy.json"; bundled = "bundled/skills/vibe/config/connector-admission-policy.json" },
+    [pscustomobject]@{ id = "role-pack-policy"; main = "config/role-pack-policy.json"; bundled = "bundled/skills/vibe/config/role-pack-policy.json" },
+    [pscustomobject]@{ id = "promotion-board"; main = "config/promotion-board.json"; bundled = "bundled/skills/vibe/config/promotion-board.json" }
 )
 
 $results = @()
@@ -290,7 +309,7 @@ $pairsTotal = $pairs.Count
 $pairsMatched = (@($results | Where-Object { $_.hash_match }).Count)
 $hashMatchRate = if ($pairsTotal -gt 0) { [double]$pairsMatched / [double]$pairsTotal } else { 1.0 }
 $totalDiffPaths = (@($results | ForEach-Object { if ($_.diff_paths_count) { $_.diff_paths_count } else { 0 } } | Measure-Object -Sum).Sum)
-$gatePassed = ($pairsMatched -eq $pairsTotal) -and (($assertions | Where-Object { -not $_ }).Count -eq 0)
+$gatePassed = ($pairsMatched -eq $pairsTotal) -and (@($assertions | Where-Object { -not $_ }).Count -eq 0)
 
 Write-Host ""
 Write-Host "=== Summary ==="

@@ -68,12 +68,141 @@ IMPORTANT: Ralph-loop is MUTUALLY EXCLUSIVE with active team orchestration.
 | Security | `worker` or `default` | Security-focused prompt and checklist |
 
 ## Team Templates
-See references/team-templates.md for 7 predefined compositions:
-- feature-team, debug-team, research-team, review-team, full-stack-team, dialectic-design
+See references/team-templates.md for predefined compositions:
+- feature-team, debug-team, research-team, review-team, full-stack-team
+- supervisor-scatter-gather (Agent-Squad-style Supervisor + Specialists)
+- dialectic-design
 
 If `local-vco-roles` is installed, you may also use:
 - local-vco-dialectic-review (Template 7)
 - Role prompts sourced from `~/.codex/skills/local-vco-roles/references/role-prompts/`
+
+## Supervisor-Style Dispatch Pattern (Agent-as-Tools)
+
+Agent Squad's `SupervisorAgent` uses an "agent-as-tools" model: a lead agent fans out tasks in parallel, then fuses results with a bounded shared memory (`<agents_memory>`).
+
+In VCO XL, the equivalent primitive is:
+
+```
+spawn_agent × N → send_input (fan-out) → wait (fan-in) → close_agent
+```
+
+### Scatter-Gather Fan-out/Fan-in (Agent Squad `send_messages`)
+
+Agent Squad provides a single built-in tool (`send_messages`) that takes an array of `{recipient, content}` and executes the fan-out in parallel, then returns gathered responses.
+
+In VCO XL, keep the same *contract shape*, but implement it with native team primitives:
+- **Fan-out**: `send_input` to each agent (one subtask per role/agent)
+- **Fan-in**: one `wait` barrier per milestone
+- **Gather**: Lead updates `<agents_memory>` once per milestone (not continuously)
+
+Rule of thumb: **one milestone == one scatter-gather round**.
+
+### Dispatch Envelope (Recommended)
+
+When using `send_input`, wrap each subtask in a small envelope so that reliability + memory become mechanical (instead of ad-hoc).
+
+```yaml
+run_id: "{yyyy-mm-dd}#{short}"
+phase: "plan|investigate|implement|verify"
+owner: "{role_name}"
+deadline_minutes: 15
+retry_budget: 1
+deliverable:
+  format: "markdown"
+  sections: ["summary", "evidence", "risks", "next_steps"]
+memory:
+  private_key: "team/{run_id}/agent/{owner}/notes"
+  shared_key: "team/{run_id}/shared/agents_memory"
+```
+
+Notes:
+- Keep `deliverable.sections` stable so Lead can aggregate quickly.
+- `private_key` is per-agent; `shared_key` is the only cross-agent memory.
+
+### Task Contract (Subtask Interface / DoD)
+
+The dispatch envelope is *transport*. The task contract is *correctness*.
+
+Before fan-out, each subtask SHOULD include a compact contract so specialists do not drift or guess:
+
+```yaml
+task_id: "T-1"
+goal: "One-sentence, testable outcome"
+scope:
+  in: ["Allowed modules/files/APIs"]
+  out: ["Explicit non-goals"]
+inputs:
+  - "Facts, constraints, and required context"
+outputs:
+  - "Artifacts (file paths) or result shape"
+definition_of_done:
+  - "Acceptance criteria (verifiable)"
+verification:
+  - "Commands/tests/checks to run"
+handoff_questions:
+  - "Missing info that must be confirmed by user/lead"
+status: "todo|doing|blocked|done"
+```
+
+Contract rules:
+- Prefer `verification` that is command-shaped (copy/paste runnable).
+- If required info is missing, return `status=blocked` with `handoff_questions` (do not guess).
+- The same contract maps cleanly to the GSD wave contract (`entry_criteria`/`exit_criteria`/`verify_commands`).
+
+## Shared Memory Contract (3-Tier)
+
+To keep XL coordination coherent while avoiding context bloat, treat memory as three tiers:
+
+1. **User ↔ Lead memory**: the main conversation (source of truth for user intent + decisions).
+2. **Lead ↔ Agent private memory**: per-agent working notes (NOT broadcast by default).
+3. **Shared agents memory**: a bounded, continuously refreshed "what we know so far" block owned by Lead.
+
+Mapping to Agent Squad terminology:
+- **User ↔ Lead memory** ≈ User-Supervisor Memory
+- **Lead ↔ Agent private memory** ≈ Supervisor-Team Memory
+- **Shared agents memory** ≈ Combined Memory (`<agents_memory>`)
+
+Bounded history rule (pair-safe):
+- Cap per-agent private history (e.g., last 10–20 message pairs).
+- When trimming, preserve complete user/assistant pairs (avoid orphan half-turns).
+
+### Shared Memory Format (Supervisor-style)
+
+Lead maintains a rolling block (in conversation context, or via ruflo `memory_store` when available):
+
+```text
+<agents_memory>
+[run_id] phase=investigate
+- (Investigator-1) key finding: ...
+- (Implementer-2) patch plan: ...
+- Open questions: ...
+- Next milestone: ...
+</agents_memory>
+```
+
+Rules:
+- Update only at milestone boundaries (after `wait`), not on every message.
+- Prefer facts + artifacts over prose. Link to file paths or commands when applicable.
+- Hard cap: if it grows beyond what can fit comfortably in-context, summarize and overwrite (do not append forever).
+
+## Reliability & Failure Handling (Timeout + Retry Budget)
+
+Borrowing from Agent Squad's orchestration patterns (bounded history, explicit error messages), XL teams should treat failures as first-class:
+
+1. **Timeout**
+   - If an agent misses its `deadline_minutes`, send one reminder via `send_input`.
+   - If still no response: proceed with partial results and record the missing deliverable in `<agents_memory>`.
+
+2. **Retry**
+   - Respect `retry_budget`. A retry must change *something* (prompt constraint, narrower scope, more context, or a different role).
+   - If retry budget is exhausted: either degrade scope or respawn a replacement agent with a simplified task.
+
+3. **Contradiction**
+   - When two agents disagree, Lead runs V2/V6: demand concrete evidence (file path, log line, command output) before choosing.
+
+4. **Degraded Mode**
+   - If multiple agents fail or outputs are low-quality, fall back to Option B (native only) and reduce parallelism (fewer agents, tighter roles).
 
 ## Staged Confirmation
 Always confirm with user at these points:
@@ -193,6 +322,10 @@ Group A receives context slice emphasizing perspective A's concerns.
 Group B receives context slice emphasizing perspective B's concerns.
 Groups do NOT share context or communicate cross-group.
 
+**Memory note (keep isolation real)**
+- Do NOT maintain a single shared `<agents_memory>` while groups are executing.
+- If you need rollups, keep **two separate blocks** (Group A only / Group B only) owned by Lead, and merge only after Step 6.
+
 **Step 5 — Execute**
 4 agents run 6-phase workflow. Intra-group communication via `send_input` (A1↔A2, B1↔B2). Max 1 round.
 
@@ -252,3 +385,33 @@ Limitations vs XL: no intra-group dialogue (only 1 agent per perspective), no Ph
 - Ralph-loop and active team orchestration are mutually exclusive
 - Only one team active per project at a time
 - Prefer native agent communication via `send_input`
+
+## BrowserOps / DesktopOps Governance Hooks
+
+在 Wave24–30 之后，XL 团队执行涉及真实浏览器或 open-world GUI 任务时，必须额外遵守以下边界：
+
+- BrowserOps 只通过 provider policy 建议 `API / Playwright / Chrome / TuriX-CUA / browser-use`，不得绕开 VCO 主路由。
+- DesktopOps 只允许以 `shadow/advisory/contract` 形式吸收 `Agent-S` 思路，不得把任何外部桌面代理提升为默认执行 owner。
+- 若 BrowserOps / DesktopOps 建议与主计划冲突，优先服从 `references/conflict-rules.md` 与 cross-plane conflict policy。
+- 进入 soft/strict 之前，必须能提供对应 gate 与 rollback command。
+
+相关资产：
+- `docs/browserops-provider-integration.md`
+- `docs/agent-s-shadow-integration.md`
+- `docs/cross-plane-conflict-governance.md`
+- `docs/promotion-board-governance.md`
+
+## Wave19-30 Specialist Roles
+
+在 XL 多智能体执行中，Wave19-30 新增以下“治理型角色”，它们提供建议与验证，不接管 VCO 总编排：
+
+- **Memory Contract Steward**：检查 Memory Runtime v2、`mem0`、`Letta` 是否越权。
+- **Prompt Intelligence Steward**：检查 prompt cards / risk checklist 是否只停留在 advisory 层。
+- **BrowserOps Provider Steward**：负责 provider candidate 建议与 browser contract 校验。
+- **DesktopOps Shadow Steward**：负责 ACI/open-world 合同化，不允许默认 takeover。
+- **Promotion Board Steward**：负责 rollout evidence、blocking findings、rollback plan 汇总。
+
+团队规则：
+1. 治理型角色不能直接替代 implementer / reviewer / router。
+2. 任何角色给出的 promote 建议都必须经过 promotion board gate。
+3. 子代理的文件写入范围必须提前切分，避免互相覆盖。

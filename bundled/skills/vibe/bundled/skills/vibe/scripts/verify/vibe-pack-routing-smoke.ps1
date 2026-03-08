@@ -1,4 +1,8 @@
-﻿param()
+param(
+    [switch]$StrictKeywords,
+    [switch]$WriteArtifacts,
+    [string]$OutputDirectory
+)
 
 $ErrorActionPreference = "Stop"
 
@@ -15,6 +19,33 @@ function Assert-True {
 
     Write-Host "[FAIL] $Message" -ForegroundColor Red
     return $false
+}
+
+function Normalize-RouteKeyword {
+    param([string]$Keyword)
+
+    if ($null -eq $Keyword) { return "" }
+    return ([string]$Keyword).Trim().ToLowerInvariant()
+}
+
+function Assert-WarnOrFail {
+    param(
+        [bool]$Condition,
+        [string]$Message
+    )
+
+    if ($Condition) {
+        Write-Host "[PASS] $Message"
+        return $true
+    }
+
+    if ($StrictKeywords) {
+        Write-Host "[FAIL] $Message" -ForegroundColor Red
+        return $false
+    }
+
+    Write-Host "[WARN] $Message" -ForegroundColor Yellow
+    return $true
 }
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
@@ -105,6 +136,23 @@ foreach ($pack in $packManifest.packs) {
     $results += Assert-True -Condition (($pack.grade_allow | Where-Object { $allowedGrades -notcontains $_ }).Count -eq 0) -Message "pack '$($pack.id)' grade boundaries valid"
     $results += Assert-True -Condition (($pack.task_allow | Where-Object { $allowedTaskTypes -notcontains $_ }).Count -eq 0) -Message "pack '$($pack.id)' task boundaries valid"
     $results += Assert-True -Condition ($null -ne $pack.defaults_by_task) -Message "pack '$($pack.id)' has defaults_by_task"
+    $results += Assert-True -Condition ($null -ne $pack.trigger_keywords) -Message "pack '$($pack.id)' has trigger_keywords"
+
+    $rawKeywords = @($pack.trigger_keywords | ForEach-Object { [string]$_ })
+    $results += Assert-True -Condition ($rawKeywords.Count -gt 0) -Message "pack '$($pack.id)' trigger_keywords non-empty"
+    $results += Assert-True -Condition (($rawKeywords | Where-Object { -not $_ -or -not $_.Trim() }).Count -eq 0) -Message "pack '$($pack.id)' trigger_keywords contain no empty items"
+    $results += Assert-WarnOrFail -Condition (($rawKeywords | Where-Object { $_ -ne $_.Trim() }).Count -eq 0) -Message "pack '$($pack.id)' trigger_keywords contain no leading/trailing whitespace"
+    $results += Assert-WarnOrFail -Condition (($rawKeywords | Where-Object { $_ -match '[\r\n\t]' }).Count -eq 0) -Message "pack '$($pack.id)' trigger_keywords contain no control whitespace (\\r/\\n/\\t)"
+    $results += Assert-WarnOrFail -Condition (($rawKeywords | Where-Object { $_ -match '[A-Z]' }).Count -eq 0) -Message "pack '$($pack.id)' trigger_keywords contain no uppercase ASCII (normalize to lowercase)"
+
+    $normalizedKeywords = @($rawKeywords | ForEach-Object { Normalize-RouteKeyword -Keyword $_ })
+    $dupGroups = $normalizedKeywords | Group-Object | Where-Object { $_.Count -gt 1 }
+    $results += Assert-WarnOrFail -Condition ($dupGroups.Count -eq 0) -Message "pack '$($pack.id)' trigger_keywords are unique after normalization (trim+lower)"
+
+    $hasEnglishNormalized = ($normalizedKeywords | Where-Object { $_ -match "[a-z]" }).Count -gt 0
+    $hasChineseNormalized = ($normalizedKeywords | Where-Object { $_ -match "[\u4E00-\u9FFF]" }).Count -gt 0
+    $results += Assert-WarnOrFail -Condition $hasEnglishNormalized -Message "pack '$($pack.id)' has at least one normalized English trigger keyword"
+    $results += Assert-WarnOrFail -Condition $hasChineseNormalized -Message "pack '$($pack.id)' has at least one normalized Chinese trigger keyword"
 
     if ($pack.defaults_by_task) {
         $defaultTaskKeys = @($pack.defaults_by_task.PSObject.Properties.Name)
@@ -213,6 +261,26 @@ foreach ($pair in $aliasPairs) {
 $passCount = ($results | Where-Object { $_ }).Count
 $failCount = ($results | Where-Object { -not $_ }).Count
 $total = $results.Count
+
+if ($WriteArtifacts) {
+    if (-not $OutputDirectory) {
+        $OutputDirectory = Join-Path $repoRoot "outputs\\verify"
+    }
+    New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
+
+    $jsonPath = Join-Path $OutputDirectory "vibe-pack-routing-smoke.summary.json"
+    [pscustomobject]@{
+        generated_at = (Get-Date).ToString("s")
+        strict_keywords = [bool]$StrictKeywords
+        total_assertions = $total
+        passed = $passCount
+        failed = $failCount
+    } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $jsonPath -Encoding UTF8
+
+    Write-Host ""
+    Write-Host "Artifacts written:"
+    Write-Host "- $jsonPath"
+}
 
 Write-Host ""
 Write-Host "=== Summary ==="

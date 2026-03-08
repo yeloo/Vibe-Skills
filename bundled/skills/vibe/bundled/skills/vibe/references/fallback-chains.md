@@ -72,6 +72,14 @@ Pack config missing/invalid
   -> fallback to legacy Grade×Type matrix
 ```
 
+## Web Scraping Pack Fallback (scrapling)
+
+When pack `web-scraping` is selected:
+
+- Primary: `scrapling` (external CLI / optional MCP server) for fast targeted extraction (CSS/XPath).
+- Fallback: `playwright` for pages requiring real browser interaction, JS execution, login flows, or when `scrapling` is missing/blocked.
+- Last resort: direct Claude reasoning after obtaining an HTML/text dump from the user.
+
 ## GSD-Lite Overlay Fallback (Planning Hook Layer)
 
 Overlay policy source: `config/gsd-overlay.json` (and bundled mirror).

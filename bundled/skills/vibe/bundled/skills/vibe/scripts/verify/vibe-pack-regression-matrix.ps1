@@ -60,6 +60,9 @@ $cases = @(
     [pscustomobject]@{ Name = "docs-media coding canonical"; Prompt = "process xlsx workbook and preserve formulas"; Grade = "M"; TaskType = "coding"; RequestedSkill = "xlsx"; ExpectedPack = "docs-media"; ExpectedSkill = "xlsx"; AllowedModes = @("pack_overlay", "confirm_required") },
     [pscustomobject]@{ Name = "docs-media research transcribe"; Prompt = "请把会议录音转文字并区分说话人"; Grade = "M"; TaskType = "research"; RequestedSkill = $null; ExpectedPack = "docs-media"; AllowedModes = @("pack_overlay", "confirm_required") },
 
+    [pscustomobject]@{ Name = "web-scraping research ZH"; Prompt = "请用爬虫抓取 https://example.com ，并用 CSS selector '#main a' 提取所有链接（scrape / 抓取 / selector）"; Grade = "L"; TaskType = "research"; RequestedSkill = $null; ExpectedPack = "web-scraping"; AllowedModes = @("pack_overlay", "confirm_required") },
+    [pscustomobject]@{ Name = "web-scraping canonical scrapling"; Prompt = "scrape https://nopecha.com/demo/cloudflare and extract '#padded_content a' (Cloudflare / Turnstile) to markdown"; Grade = "M"; TaskType = "coding"; RequestedSkill = "scrapling"; ExpectedPack = "web-scraping"; AllowedModes = @("pack_overlay", "confirm_required") },
+
     [pscustomobject]@{ Name = "integration-devops debug"; Prompt = "debug github actions ci failure and inspect sentry errors"; Grade = "L"; TaskType = "debug"; RequestedSkill = $null; ExpectedPack = "integration-devops"; AllowedModes = @("pack_overlay", "confirm_required") },
 
     [pscustomobject]@{ Name = "ai-llm research"; Prompt = "query OpenAI official docs for Responses API and model limits"; Grade = "M"; TaskType = "research"; RequestedSkill = $null; ExpectedPack = "ai-llm"; AllowedModes = @("pack_overlay", "confirm_required", "legacy_fallback") },

@@ -6,19 +6,19 @@ This document organizes the VCO blackbox inspection and enhancement scripts into
 
 - Make route/overlay behavior observable (no more blackbox guesswork).
 - Mine user-style task language from route records and convert it into safe overlay vocabulary expansion.
-- Run threshold sensitivity scanning with fixed step (`0.05`) and output a controllable recommendation table.
+- Keep probe-and-enhancement guidance honest to the current canonical tool surface, so historical utilities are clearly marked instead of treated as active scripts.
 - Keep main and bundled configs consistent after updates.
 
 ## 2. Module Map
 
 | Module | Script | Purpose | Primary Outputs |
 | --- | --- | --- | --- |
-| Stage Trace Probe | `scripts/verify/vibe-routing-probe-trace.ps1` | White-box capture of route stage events and runtime state prompt per case | `outputs/verify/route-probe-trace/*` |
+| Scientific Pack Probe | `scripts/verify/probe-scientific-packs.ps1` | Pack-focused routing probe matrix with per-case pack/skill match summaries | `outputs/verify/route-probe-scientific/*` |
 | Research Matrix Probe | `scripts/verify/vibe-routing-probe-research.ps1` | Multi-scenario routing study (ambiguous/specific/overlay-targeted/runtime prompt) with stage integrity checks | `outputs/verify/route-probe-research/*` |
 | Deep Discovery Gate | `scripts/verify/vibe-deep-discovery-gate.ps1` | Validate Deep Discovery rollout semantics (`off/shadow/soft/strict`) and route mutation boundaries | terminal assertions + optional probe artifacts |
 | Deep Discovery Scenarios | `scripts/verify/vibe-deep-discovery-scenarios.ps1` | Scenario-based study for Deep Discovery trigger/interview/contract/filter behavior | `outputs/verify/deep-discovery-scenarios/*` |
 | User Semantic Mining | `scripts/research/mine-user-semantic-overlay-signals.ps1` | Mine local route probe history and propose/apply overlay phrase additions | `outputs/user-semantic/user-overlay-lexicon.{json,md}` |
-| Threshold Sensitivity Scan | `scripts/verify/vibe-overlay-threshold-sensitivity-scan.ps1` | Sweep `signal_relaxed_min_score` by `0.05`, evaluate precision/recall/F1/accuracy, output recommendations | `outputs/verify/overlay-threshold-scan/*` |
+| Threshold Sensitivity Scan | _historical utility (not shipped in current canonical tree)_ | Keep as changelog/reference context only; do not use as an active runbook command | historical references only |
 | Regression and Consistency Gates | `scripts/verify/vibe-config-parity-gate.ps1`, `scripts/verify/vibe-pack-routing-smoke.ps1`, `scripts/verify/vibe-routing-smoke.ps1` | Prevent config drift and routing regressions | `outputs/verify/*` |
 
 ## 3. Runtime Injection Chain (How Data Actually Flows)
@@ -46,9 +46,9 @@ Key injection points:
 
 Model-visible final text:
 
-- Look at `runtime_state_prompt` samples in:
+- Look at runtime prompt / route evidence samples in:
   - `outputs/verify/route-probe-research/route-probe-research-summary-*.md`
-  - `outputs/verify/route-probe-trace/*.json`
+  - `outputs/verify/route-probe-scientific/*`
 
 ## 4. Standard Repro Workflow
 
@@ -79,17 +79,9 @@ If local history is small, use:
 & ".\scripts\research\mine-user-semantic-overlay-signals.ps1" -MinHits 1 -ApplyToConfig
 ```
 
-### Step C: Scan thresholds with fixed step `0.05`
+### Step C: Historical threshold-scan note
 
-```powershell
-& ".\scripts\verify\vibe-overlay-threshold-sensitivity-scan.ps1" -Step 0.05
-```
-
-Apply recommended thresholds:
-
-```powershell
-& ".\scripts\verify\vibe-overlay-threshold-sensitivity-scan.ps1" -Step 0.05 -ApplyRecommended
-```
+The prior fixed-step threshold scan utility is referenced in changelog history, but it is not currently shipped in the canonical `scripts/verify/` tree. Treat those references as historical context until the utility is restored or replaced by a new governed operator.
 
 ### Step D: Run gates
 

@@ -6,6 +6,7 @@
 2. Lean: avoid LLM-heavy monitoring by default; keep runtime context pressure minimal.
 3. Adaptive: learn from real usage by environment/user profile, but never auto-apply risky changes.
 4. Safe operations: rollback is notify-only, requires explicit user confirmation.
+5. Promotion-aware: new absorption planes can only move beyond `shadow` when evidence is captured on the promotion board.
 
 ## Runtime Model
 
@@ -19,6 +20,7 @@ Telemetry is sampled by mode (`shadow/soft/strict`) and force-captures high-risk
 
 - `route_mode in {confirm_required, legacy_fallback}`
 - any overlay requesting `confirm_required`
+- any plane entering promotion evaluation (`memory`, `prompt`, `browserops`, `desktopops`)
 
 ## Privacy and Context Budget
 
@@ -35,14 +37,17 @@ Default policy is low-context and privacy-safe:
 - command-priority violation
 - task boundary violation
 - malformed router output
+- second control plane / second execution owner conflict
 
 `P1 functional_fail`:
 - selected candidate outside allowed contract
 - expected `confirm_required` not raised
-- out-of-scope overlay triggered as active
+- out-of-scope overlay/provider triggered as active
+- promotion board missing required evidence fields
 
 `P2 stability_fail`:
 - gate threshold regression (`route_stability`, `top1_top2_gap`, `fallback_rate`, `misroute_rate`)
+- pilot scenarios fail for a promoted or soft-rolled plane
 
 `P3 outcome_proxy_fail`:
 - route appears valid, but downstream acceptance degrades significantly
@@ -55,6 +60,23 @@ Default policy is low-context and privacy-safe:
 - Policy: bounded threshold deltas, manual review required
 
 Suggested changes are advisory only. No automatic config mutation.
+
+## Promotion Board Integration
+
+Wave27–30 将 observability 与 promotion board 绑定：
+
+- Promotion board: `docs/promotion-board-governance.md` + `config/promotion-board.json`
+- Soft rollout helper: `scripts/governance/publish-absorption-soft-rollout.ps1`
+- Gates:
+  - `scripts/verify/vibe-promotion-board-gate.ps1`
+  - `scripts/verify/vibe-pilot-scenarios.ps1`
+
+每个待推广平面都必须记录：
+- current stage (`off/shadow/soft/strict/promoted`)
+- evidence summary
+- required gates
+- rollback command
+- owner / review timestamp
 
 ## Rollback Policy
 
@@ -72,5 +94,24 @@ Automatic rollback execution is disabled by governance policy.
 2. `scripts/verify/vibe-config-parity-gate.ps1`
 3. `scripts/verify/vibe-routing-stability-gate.ps1 -Strict`
 4. `scripts/verify/vibe-observability-gate.ps1`
+5. `scripts/verify/vibe-promotion-board-gate.ps1`
+6. `scripts/verify/vibe-pilot-scenarios.ps1`
 
-Only after all pass should rollout stage be advanced.
+Only after all required gates pass should rollout stage be advanced.
+
+## Wave27-30 Promotion Evidence Layer
+
+Wave27-30 为 observability / consistency 增加了 promotion board 与 pilot 证据层。
+
+关联资产：
+- `docs/promotion-board-governance.md`
+- `config/promotion-board.json`
+- `scripts/governance/publish-absorption-soft-rollout.ps1`
+- `docs/pilot-scenarios-and-eval.md`
+- `scripts/verify/vibe-promotion-board-gate.ps1`
+- `scripts/verify/vibe-pilot-scenarios.ps1`
+
+新增治理要求：
+1. rollout 必须有 evidence score、blocking findings、rollback command。
+2. soft rollout 只允许 advice-first，不允许无证据 promote。
+3. pilot fixtures 是 promotion 的先决条件，而不是发布后的补充材料。

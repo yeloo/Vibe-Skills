@@ -5,6 +5,7 @@ PROFILE="full"
 INSTALL_EXTERNAL="false"
 STRICT_OFFLINE="false"
 ALLOW_EXTERNAL_SKILL_FALLBACK="false"
+SKIP_RUNTIME_FRESHNESS_GATE="false"
 TARGET_ROOT="${HOME}/.codex"
 
 while [[ $# -gt 0 ]]; do
@@ -14,6 +15,7 @@ while [[ $# -gt 0 ]]; do
     --install-external) INSTALL_EXTERNAL="true"; shift ;;
     --strict-offline) STRICT_OFFLINE="true"; shift ;;
     --allow-external-skill-fallback) ALLOW_EXTERNAL_SKILL_FALLBACK="true"; shift ;;
+    --skip-runtime-freshness-gate) SKIP_RUNTIME_FRESHNESS_GATE="true"; shift ;;
     *) echo "Unknown arg: $1"; exit 1 ;;
   esac
 done
@@ -28,6 +30,126 @@ SP_SRC_ROOT="${SCRIPT_DIR}/bundled/superpowers-skills"
 EXTERNAL_FALLBACK_USED=()
 MISSING_REQUIRED=()
 
+json_query_lines() {
+  local expr="$1"
+  local governance_path="${SCRIPT_DIR}/config/version-governance.json"
+  if [[ ! -f "${governance_path}" ]]; then
+    return 1
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "${governance_path}" "${expr}" <<'PY'
+import json, sys
+path, expr = sys.argv[1], sys.argv[2]
+with open(path, encoding='utf-8-sig') as fh:
+    data = json.load(fh)
+value = data
+for part in expr.split('.'):
+    value = value[part]
+if isinstance(value, list):
+    for item in value:
+        print(item)
+elif isinstance(value, bool):
+    print('true' if value else 'false')
+elif value is None:
+    pass
+else:
+    print(value)
+PY
+    return $?
+  elif command -v python >/dev/null 2>&1; then
+    python - "${governance_path}" "${expr}" <<'PY'
+import json, sys
+path, expr = sys.argv[1], sys.argv[2]
+with open(path, encoding='utf-8-sig') as fh:
+    data = json.load(fh)
+value = data
+for part in expr.split('.'):
+    value = value[part]
+if isinstance(value, list):
+    for item in value:
+        print(item)
+elif isinstance(value, bool):
+    print('true' if value else 'false')
+elif value is None:
+    pass
+else:
+    print(value)
+PY
+    return $?
+  elif command -v pwsh >/dev/null 2>&1; then
+    pwsh -NoProfile -Command '
+param([string]$Path,[string]$Expr)
+$raw = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+$value = $raw | ConvertFrom-Json
+foreach ($part in $Expr.Split(".")) {
+  $value = $value.$part
+}
+if ($value -is [System.Collections.IEnumerable] -and -not ($value -is [string])) {
+  foreach ($item in $value) {
+    if ($item -is [bool]) {
+      if ($item) { "true" } else { "false" }
+    } elseif ($null -ne $item) {
+      $item
+    }
+  }
+} elseif ($value -is [bool]) {
+  if ($value) { "true" } else { "false" }
+} elseif ($null -ne $value) {
+  $value
+}
+' -Args "$governance_path" "$expr"
+    return $?
+  fi
+
+  return 1
+}
+
+json_query_scalar() {
+  local expr="$1"
+  json_query_lines "${expr}" | head -n 1
+}
+
+run_runtime_freshness_gate() {
+  if [[ "${SKIP_RUNTIME_FRESHNESS_GATE}" == "true" ]]; then
+    echo "[WARN] Skipping runtime freshness gate by request."
+    return 0
+  fi
+
+  if [[ ! -d "${SCRIPT_DIR}/.git" ]]; then
+    echo "[WARN] Runtime freshness gate requires the canonical repo root; skipping because no outer .git root was found."
+    return 0
+  fi
+
+  local gate_rel="scripts/verify/vibe-installed-runtime-freshness-gate.ps1"
+  local configured_gate
+  configured_gate="$(json_query_scalar 'runtime.installed_runtime.post_install_gate' 2>/dev/null || true)"
+  if [[ -n "${configured_gate}" ]]; then
+    gate_rel="${configured_gate}"
+  fi
+  local gate_path="${SCRIPT_DIR}/${gate_rel}"
+  if [[ ! -f "${gate_path}" ]]; then
+    echo "[FAIL] Runtime freshness gate script missing: ${gate_path}"
+    return 1
+  fi
+
+  if ! command -v pwsh >/dev/null 2>&1; then
+    echo "[WARN] pwsh not found; runtime freshness gate skipped."
+    return 0
+  fi
+
+  pwsh -NoProfile -File "${gate_path}" -TargetRoot "${TARGET_ROOT}" -WriteReceipt
+
+  local receipt_rel receipt_path
+  receipt_rel="$(json_query_scalar 'runtime.installed_runtime.receipt_relpath' 2>/dev/null || true)"
+  [[ -n "${receipt_rel}" ]] || receipt_rel='skills/vibe/outputs/runtime-freshness-receipt.json'
+  receipt_path="${TARGET_ROOT}/${receipt_rel}"
+  if [[ ! -f "${receipt_path}" ]]; then
+    echo "[FAIL] Runtime freshness receipt missing after install: ${receipt_path}"
+    return 1
+  fi
+}
+
 copy_dir_content() {
   local src="$1"
   local dst="$2"
@@ -37,22 +159,44 @@ copy_dir_content() {
 }
 
 sync_vibe_canonical_to_target() {
-  local canonical_root="${SCRIPT_DIR}"
+  local governance_path="${SCRIPT_DIR}/config/version-governance.json"
+  local canonical_rel='.'
+  local files=()
+  local dirs=()
+
+  if [[ -f "${governance_path}" ]]; then
+    local configured_canonical_rel
+    configured_canonical_rel="$(json_query_scalar 'source_of_truth.canonical_root' 2>/dev/null || true)"
+    if [[ -n "${configured_canonical_rel}" ]]; then
+      canonical_rel="${configured_canonical_rel}"
+    fi
+
+    mapfile -t files < <(json_query_lines 'packaging.mirror.files' 2>/dev/null)
+    mapfile -t dirs < <(json_query_lines 'packaging.mirror.directories' 2>/dev/null)
+  else
+    echo "[WARN] Missing version governance config: ${governance_path}; using safe fallback mirror scope."
+  fi
+
+  if [[ ${#files[@]} -eq 0 || ${#dirs[@]} -eq 0 ]]; then
+    echo "[WARN] Failed to load packaging mirror scope from version-governance.json; using safe fallback mirror scope."
+    files=(
+      "SKILL.md"
+      "check.ps1"
+      "check.sh"
+      "install.ps1"
+      "install.sh"
+    )
+    dirs=(
+      "config"
+      "protocols"
+      "references"
+      "docs"
+      "scripts"
+    )
+  fi
+
+  local canonical_root="${SCRIPT_DIR}/${canonical_rel}"
   local target_vibe_root="${TARGET_ROOT}/skills/vibe"
-  local files=(
-    "SKILL.md"
-    "check.ps1"
-    "check.sh"
-    "install.ps1"
-    "install.sh"
-  )
-  local dirs=(
-    "config"
-    "protocols"
-    "references"
-    "docs"
-    "scripts"
-  )
 
   local rel src dst
   for rel in "${files[@]}"; do
@@ -66,6 +210,7 @@ sync_vibe_canonical_to_target() {
   for rel in "${dirs[@]}"; do
     src="${canonical_root}/${rel}"
     dst="${target_vibe_root}/${rel}"
+    [[ -d "${dst}" ]] && rm -rf "${dst}"
     copy_dir_content "${src}" "${dst}"
   done
 }
@@ -108,6 +253,10 @@ echo "Profile: ${PROFILE}"
 echo "Target : ${TARGET_ROOT}"
 echo "StrictOffline: ${STRICT_OFFLINE}"
 echo "AllowExternalSkillFallback: ${ALLOW_EXTERNAL_SKILL_FALLBACK}"
+echo "SkipRuntimeFreshnessGate: ${SKIP_RUNTIME_FRESHNESS_GATE}"
+
+TARGET_VIBE_REL="$(json_query_scalar 'runtime.installed_runtime.target_relpath' 2>/dev/null || true)"
+[[ -n "${TARGET_VIBE_REL}" ]] || TARGET_VIBE_REL='skills/vibe'
 
 mkdir -p \
   "${TARGET_ROOT}/skills" \
@@ -122,7 +271,7 @@ copy_dir_content "${SCRIPT_DIR}/bundled/skills" "${TARGET_ROOT}/skills"
 
 # Ensure unified /vibe entry uses the latest router implementation (script + modules) after install.
 VIBE_ROUTER_SRC_DIR="${SCRIPT_DIR}/scripts/router"
-VIBE_ROUTER_DEST_DIR="${TARGET_ROOT}/skills/vibe/scripts/router"
+VIBE_ROUTER_DEST_DIR="${TARGET_ROOT}/${TARGET_VIBE_REL}/scripts/router"
 if [[ -d "${VIBE_ROUTER_SRC_DIR}" ]]; then
   copy_dir_content "${VIBE_ROUTER_SRC_DIR}" "${VIBE_ROUTER_DEST_DIR}"
 fi
@@ -248,5 +397,7 @@ elif [[ ${#EXTERNAL_FALLBACK_USED[@]} -gt 0 ]]; then
   uniq_fallback="$(printf "%s\n" "${EXTERNAL_FALLBACK_USED[@]}" | sort -u | tr '\n' ',' | sed 's/,$//')"
   echo "[WARN] External fallback skills were used (non-reproducible install): ${uniq_fallback}"
 fi
+
+run_runtime_freshness_gate
 
 echo "Install done. Run: bash check.sh --profile ${PROFILE} --target-root ${TARGET_ROOT}"

@@ -23,6 +23,10 @@ Complete reference of VCO execution tools, their capabilities, APIs, state paths
 | 15 | system-design-primer patterns (optional architecture source) | Methodology overlay | None | Config-driven advisory metadata | ⚠️ Optional |
 | 16 | LeetCUDA patterns (optional CUDA optimization source) | Methodology overlay | None | Config-driven advisory metadata | ⚠️ Optional |
 | 17 | Scrapling (optional) | External CLI + MCP server | None | None (writes user-specified output files) | ⚠️ Optional |
+| 18 | Docling MCP / provider contract | Provider contract / document-plane governance | None | Canonical config + references + verify gates | ✅ |
+| 19 | Connector admission layer | Governance layer (catalog + provider admission) | None | Canonical config + matrix + verify gates | ✅ |
+| 20 | Role-pack distillation layer | Governance layer (role cards + skill distillation rules) | None | Canonical docs + references + verify gates | ✅ |
+| 21 | Capability catalog corpus | Governance layer (capability discovery / eval inputs) | None | Canonical config + references + verify gates | ✅ |
 
 ## Verification Status Legend
 
@@ -249,7 +253,7 @@ Characteristics:
 
 ## 8. Open Ralph Wiggum CLI (Optional Auto-Loop Backend)
 
-**Package**: `@th0rgal/ralph-wiggum`  
+**Package**: `@th0rgal/ralph-wiggum`
 **Binary**: `ralph`
 
 ### Key Capabilities
@@ -286,7 +290,7 @@ Characteristics:
 
 ## 10. xan (Optional Large-CSV Backend)
 
-**Package**: `xan`  
+**Package**: `xan`
 **Binary**: `xan`
 
 ### Key Capabilities
@@ -304,7 +308,7 @@ Characteristics:
 
 ## 11. fuck-u-code (Optional Quality Debt Analyzer)
 
-**Package/Repo**: `Done-0/fuck-u-code`  
+**Package/Repo**: `Done-0/fuck-u-code`
 **Binary**: `fuck-u-code` (optional, environment-specific)
 
 ### Key Capabilities
@@ -322,7 +326,7 @@ Characteristics:
 
 ## 12. ivy (Optional Framework Interop Backend)
 
-**Package/Repo**: `ivy-llc/ivy`  
+**Package/Repo**: `ivy-llc/ivy`
 **Import/Binary**: `import ivy` (optional CLI entrypoint if installed by environment)
 
 ### Key Capabilities
@@ -340,7 +344,7 @@ Characteristics:
 
 ## 13. Made-With-ML Lifecycle Patterns (Optional Governance Source)
 
-**Package/Repo**: `GokuMohandas/Made-With-ML`  
+**Package/Repo**: `GokuMohandas/Made-With-ML`
 **Integration Type**: methodology and lifecycle policy source (non-executable dependency)
 
 ### Key Capabilities Imported into VCO
@@ -358,7 +362,7 @@ Characteristics:
 
 ## 14. clean-code-python Patterns (Optional Python Quality Source)
 
-**Package/Repo**: `zedr/clean-code-python`  
+**Package/Repo**: `zedr/clean-code-python`
 **Integration Type**: methodology and Python clean-code policy source (non-executable dependency)
 
 ### Key Capabilities Imported into VCO
@@ -376,7 +380,7 @@ Characteristics:
 
 ## 15. system-design-primer Patterns (Optional Architecture Source)
 
-**Package/Repo**: `donnemartin/system-design-primer`  
+**Package/Repo**: `donnemartin/system-design-primer`
 **Integration Type**: architecture methodology source (non-executable dependency)
 
 ### Key Capabilities Imported into VCO
@@ -394,7 +398,7 @@ Characteristics:
 
 ## 16. LeetCUDA Patterns (Optional CUDA Optimization Source)
 
-**Package/Repo**: `xlite-dev/LeetCUDA`  
+**Package/Repo**: `xlite-dev/LeetCUDA`
 **Integration Type**: CUDA optimization methodology source (non-executable dependency)
 
 ### Key Capabilities Imported into VCO
@@ -412,15 +416,71 @@ Characteristics:
 
 ## 17. Scrapling (optional web scraping CLI + MCP server)
 
-**Type**: External CLI + optional MCP server  
-**Primary Use**: Web scraping / targeted extraction (CSS selector / XPath), pre-extract page content before handing to the LLM to reduce tokens and speed up workflows.  
+**Type**: External CLI + optional MCP server
+**Primary Use**: Web scraping / targeted extraction (CSS selector / XPath), pre-extract page content before handing to the LLM to reduce tokens and speed up workflows.
 **Invocation**:
 - CLI: `scrapling ...`
 - MCP server (optional): `scrapling mcp` (stdio)
 
 **State Location**: None (stateless). Outputs are written to user-specified files/paths only.
 
-**Verified**: ⚠️ Optional  
+**Verified**: ⚠️ Optional
 Notes:
 - Requires user environment install (e.g. `pip install "scrapling[ai]"` for MCP features).
 - If unavailable or blocked by anti-bot / interactive flows, fall back to `playwright` (real browser automation).
+## 18. Docling MCP / provider contract
+
+**Type**: Provider contract / document-plane governance
+**Primary Use**: Treat `docling` as the canonical document-plane contract source for structured extraction, not as a second document orchestrator.
+**Invocation**: Governance only; use the VCO document-plane rules and provider policy.
+**State Location**:
+- `config/docling-provider-policy.json`
+- `references/docling-output-spec.md`
+- `docs/docling-document-plane-integration.md`
+
+**VCO Integration Boundary**:
+- productized as a provider contract only
+- may inform routing and extraction expectations
+- must not replace the canonical VCO route owner
+
+## 19. Connector admission layer
+
+**Type**: Governance layer (catalog + provider admission)
+**Primary Use**: Admit or reject connector candidates from `awesome-mcp-servers`, `composio`, and `activepieces` with explicit risk classes and rollback notes.
+**State Location**:
+- `config/connector-admission-policy.json`
+- `references/connector-capability-matrix.md`
+- `docs/connector-admission-governance.md`
+
+**VCO Integration Boundary**:
+- connector catalogs are discovery inputs only
+- providers remain `advice-first` / `confirm-gated`
+- no connector source may become a second route owner or automation runtime by default
+
+## 20. Role-pack distillation layer
+
+**Type**: Governance layer (role cards + skill distillation rules)
+**Primary Use**: Distill value from `agent-squad`, `claude-skills`, `awesome-agent-skills`, `awesome-claude-code-subagents`, and `antigravity-awesome-skills` into VCO-native role packs and quality rules.
+**State Location**:
+- `config/role-pack-policy.json`
+- `references/role-pack-catalog.md`
+- `references/skill-distillation-rules.md`
+- `docs/role-pack-distillation-governance.md`
+
+**VCO Integration Boundary**:
+- role packs may inform team templates and review quality
+- they must not become a second orchestrator or second team execution owner
+
+## 21. Capability catalog corpus
+
+**Type**: Governance layer (capability discovery / eval inputs)
+**Primary Use**: Quantify the value slices absorbed from the 15-project upstream corpus and provide a canonical discovery/eval index.
+**State Location**:
+- `config/capability-catalog.json`
+- `references/capability-catalog.md`
+- `docs/discovery-eval-corpus-governance.md`
+- `docs/upstream-eval-pilot-scenarios.md`
+
+**VCO Integration Boundary**:
+- capability cards are discovery and evaluation aids only
+- they cannot supersede the primary router or create a new runtime surface

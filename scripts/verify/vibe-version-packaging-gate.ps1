@@ -27,7 +27,7 @@ function Remove-IgnoredKeys {
 
     if ($null -eq $Node) { return $null }
 
-    if ($Node -is [System.Management.Automation.PSCustomObject] -or ($Node -isnot [string] -and $Node.PSObject -and $Node.PSObject.Properties.Count -gt 0 -and $Node -isnot [System.Collections.IEnumerable])) {
+    if ($Node -is [System.Management.Automation.PSCustomObject] -or ($Node -isnot [string] -and $Node.PSObject -and @($Node.PSObject.Properties).Count -gt 0 -and $Node -isnot [System.Collections.IEnumerable])) {
         $ordered = [ordered]@{}
         foreach ($prop in @($Node.PSObject.Properties) | Sort-Object -Property Name) {
             $key = [string]$prop.Name
@@ -111,19 +111,15 @@ function Get-FileParity {
     return (Get-FileHash -LiteralPath $MainPath -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath $BundledPath -Algorithm SHA256).Hash
 }
 
-$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-$governancePath = Join-Path $repoRoot "config\version-governance.json"
-
+. (Join-Path $PSScriptRoot "..\common\vibe-governance-helpers.ps1")
+$context = Get-VgoGovernanceContext -ScriptPath $PSCommandPath -EnforceExecutionContext
+$repoRoot = $context.repoRoot
+$governancePath = $context.governancePath
+$governance = $context.governance
+$canonicalRoot = $context.canonicalRoot
+$bundledRoot = $context.bundledRoot
+$nestedBundledRoot = $context.nestedBundledRoot
 Write-Host "=== VCO Version Packaging Gate ==="
-
-if (-not (Test-Path -LiteralPath $governancePath)) {
-    Write-Host "[FAIL] version governance config missing: $governancePath" -ForegroundColor Red
-    exit 1
-}
-
-$governance = Get-Content -LiteralPath $governancePath -Raw -Encoding UTF8 | ConvertFrom-Json
-$canonicalRoot = Join-Path $repoRoot ([string]$governance.source_of_truth.canonical_root)
-$bundledRoot = Join-Path $repoRoot ([string]$governance.source_of_truth.bundled_root)
 $mirrorFiles = @($governance.packaging.mirror.files)
 $mirrorDirs = @($governance.packaging.mirror.directories)
 $allowBundledOnly = @($governance.packaging.allow_bundled_only)
@@ -222,7 +218,7 @@ foreach ($dir in $mirrorDirs) {
     }
 }
 
-$total = $assertions.Count
+$total = @($assertions).Count
 $passed = @($assertions | Where-Object { $_ }).Count
 $failed = $total - $passed
 $gatePass = ($failed -eq 0)

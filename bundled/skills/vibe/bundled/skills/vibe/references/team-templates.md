@@ -82,6 +82,35 @@ Workflow: Planner designs -> Lead approves phases -> Parallel implementation -> 
 - With ruflo available, persist milestones via `memory_store` and formalize workflows via `workflow_create`/`workflow_execute`.
 - Without ruflo, keep the same team and coordinate dependencies via lead-managed `send_input` + milestone `wait`.
 
+## Template Add-on: Dispatch Envelope + Shared Memory Keys
+
+For any template, use a consistent "dispatch envelope" when sending tasks via `send_input`. This makes aggregation and failure handling predictable across teams.
+
+Minimum fields to include in every agent prompt:
+- `run_id`: shared identifier for this XL execution.
+- `phase`: `plan|investigate|implement|verify`.
+- `deadline_minutes` + `retry_budget`: reliability contract.
+- `deliverable.sections`: stable output shape for lead aggregation.
+- `memory.private_key` + `memory.shared_key`: where notes and rollups live.
+
+For the *subtask correctness* contract (goal/scope/DoD/verification/handoff questions), reuse:
+- `protocols/team.md` → **Task Contract (Subtask Interface / DoD)**
+
+Example (copy/paste into prompts):
+
+```yaml
+run_id: "{yyyy-mm-dd}#{short}"
+phase: "investigate"
+deadline_minutes: 15
+retry_budget: 1
+deliverable:
+  format: "markdown"
+  sections: ["summary", "evidence", "risks", "next_steps"]
+memory:
+  private_key: "team/{run_id}/agent/{role}/notes"
+  shared_key: "team/{run_id}/shared/agents_memory"
+```
+
 ## Template 6: dialectic-design
 
 For multi-perspective design analysis via structured dialectical workflow.
@@ -152,3 +181,24 @@ For users who installed `local-vco-roles` and want stable role prompts aligned w
 2. Maintain severity order: `CRITICAL > HIGH > MEDIUM > LOW`.
 3. Keep decision output format: `keep / simplify / remove`.
 4. User explicit command overrides this template.
+
+## Template 8: supervisor-scatter-gather
+
+For Agent-Squad-style "SupervisorAgent" coordination (agent-as-tools) where you need parallel specialist work, then one coherent synthesis.
+
+| Role | Native Agent Type | Responsibility |
+|------|-------------------|----------------|
+| Lead (Supervisor) | `default` | Single entry point, fan-out/fan-in, final synthesis |
+| Specialist-1 | `explorer` | Evidence gathering / codebase reading |
+| Specialist-2 | `explorer` | Alternative perspective / risk analysis |
+| Specialist-3 | `worker` | Implementation-ready recommendations (or patch) |
+
+Workflow:
+1. Lead defines milestone + dispatch envelope + task contract.
+2. Fan-out via parallel `send_input` calls (one per specialist).
+3. Fan-in via a single `wait` barrier.
+4. Lead gathers into `<agents_memory>` (milestone-only updates), resolves contradictions with evidence-first rules, then delivers.
+
+Constraints:
+- Specialists do NOT talk to each other (Lead is the only intermediary).
+- Prefer bounded history: keep per-specialist context small; roll forward via `<agents_memory>` instead of long threads.

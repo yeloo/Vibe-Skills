@@ -3,16 +3,51 @@ This directory stores optional verification scripts for CI and local smoke check
 For a single entrypoint that ties route probing, semantic expansion, threshold tuning, and gates together, read:
 - `..\..\docs\blackbox-probe-and-enhancement-playbook.md`
 
+## Start Here
+
+- `gate-family-index.md`：verify family 导航入口；先按治理主题找 gate，再进入具体脚本。
+- `../../docs/docs-information-architecture.md`：`docs/` 的正式信息架构与 cleanup-first 导航规则。
+- `../../references/reference-asset-taxonomy.md`：`references/` 的 contract / registry / matrix / ledger 分类。
+- `../../docs/plans/2026-03-08-repo-cleanliness-batch2-4-triage.md`：本轮 cleanup-first 的 Batch 2-4 拆分与 stop rules。
+- `../../scripts/governance/README.md`：operator script surface；说明 sync / rollout / release / audit 的职责边界。
+- `../../scripts/common/README.md`：shared helpers / wave runner / UTF-8 no BOM 写入原语。
+## Cleanup-First Canonical Run Order
+
+1. 触及 version / packaging / install / frontmatter 时，先跑 runtime integrity 家族 gate。
+2. 每个 canonical 批次收口后，必跑 cleanliness / outputs / mirror hygiene 家族 gate。
+3. 根据本次变更所属治理域，补跑对应 plane / overlay / capability / release family gate。
+4. 只有在 planning board、promotion、release evidence 变化时，才补 closure / release-train / promotion gates。
+
+## Gate Families
+
+- **Runtime Integrity / Packaging**：`vibe-bom-frontmatter-gate.ps1`、`vibe-version-consistency-gate.ps1`、`vibe-version-packaging-gate.ps1`、`vibe-config-parity-gate.ps1`、`vibe-installed-runtime-freshness-gate.ps1`。
+- **Cleanliness / Outputs / Mirror Hygiene**：`vibe-repo-cleanliness-gate.ps1`、`vibe-output-artifact-boundary-gate.ps1`、`vibe-mirror-edit-hygiene-gate.ps1`、`vibe-nested-bundled-parity-gate.ps1`。
+- **Routing Core / Retro / Probe**：routing smoke / stability / retro / probe family。
+- **Memory / Prompt / Overlay Governance**：memory、prompt、retrieval、data-scale、framework-interop、quality-debt、system-design、CUDA overlay family。
+- **Plane Governance**：browserops、desktopops、docling、document、connector、discovery family。
+- **Capability / Upstream / Release**：capability、role-pack、upstream value ops、promotion、release、observability family。
+
+详见：`gate-family-index.md`
+## Fixture Taxonomy
+
+- **Wave28 canonical pilot fixtures**: `fixtures/pilot-memory.json`, `fixtures/pilot-prompt.json`, `fixtures/pilot-browserops.json`, `fixtures/pilot-desktopops.json`. These are the only pilot inputs consumed by `vibe-pilot-scenarios.ps1` and referenced by `config/promotion-board.json`.
+- **Gate-only mock fixtures**: `fixtures/prompt-asset-boost.mock.json` and `fixtures/llm-acceleration.mock.json`. They exist only to support their corresponding mock-provider gates and are not pilot assets.
+- **Deprecated shadow fixtures**: legacy `*-shadow.json` pilot-name variants are intentionally removed from the active fixture set to prevent canonical/shadow naming ambiguity.
+
 - `vibe-routing-smoke.ps1`: runtime-neutral terminology and M/L/XL routing behavior smoke tests.
 - `vibe-pack-routing-smoke.ps1`: validates pack router config integrity, thresholds, and alias safety.
 - `vibe-soft-migration-practice.ps1`: practical soft-migration checks for alias routing and legacy fallback behavior.
 - `vibe-pack-regression-matrix.ps1`: broad pack-level regression matrix and determinism checks.
 - `vibe-keyword-precision-audit.ps1`: bilingual keyword precision audit (EN/ZH), cross-pack interference gap checks, and full skill-by-skill routing sweep.
+- `vibe-trigger-keyword-hygiene-gate.ps1`: trigger keyword hygiene gate (empty/whitespace/case-duplicate detection + cross-pack collision report, optional strict collision fail).
 - `vibe-skill-index-routing-audit.ps1`: per-skill keyword index routing checks using common Chinese business phrases and ambiguous same-pack scenarios.
 - `vibe-routing-stability-gate.ps1`: synonym-group and task-cross routing gate. Reports `route_stability`, `top1_top2_gap`, `fallback_rate`, and `misroute_rate`, with optional strict thresholds.
 - `vibe-config-parity-gate.ps1`: config parity gate for main vs bundled VCO JSON configs using normalized structural comparison + hash + diff-path output.
 - `vibe-version-consistency-gate.ps1`: release metadata consistency gate across `config/version-governance.json`, maintenance markers, changelog header, and release ledger.
 - `vibe-version-packaging-gate.ps1`: validates version/source-of-truth and packaging mirror consistency between canonical root and `bundled/skills/vibe`.
+- `vibe-repo-cleanliness-gate.ps1`: classifies dirty working-tree entries, blocks visible local noise/runtime artifacts, and reports governed workset pressure separately from local hygiene.
+- `vibe-output-artifact-boundary-gate.ps1`: governs the legacy tracked `outputs/**` allowlist so runtime outputs and long-term fixtures stay explicitly separated.
+- `vibe-installed-runtime-freshness-gate.ps1`: validates installed runtime freshness between canonical root and `${TARGET_ROOT}/skills/vibe`, and can write a runtime freshness receipt after install.
 - `vibe-context-retro-smoke.ps1`: validates Context Retro Advisor integration in SKILL/protocol/fallback docs and main/bundled sync for retro-critical files.
 - `vibe-retro-context-regression-matrix.ps1`: fixed-case regression matrix for retro trigger thresholds and CF-1..CF-6 classification stability.
 - `cer-compare.ps1`: compares two CER JSON reports and outputs Markdown/JSON delta summaries (pattern/fallback/stability/context-pressure/gap).
@@ -34,11 +69,31 @@ For a single entrypoint that ties route probing, semantic expansion, threshold t
 - `vibe-cuda-kernel-overlay-gate.ps1`: validates LeetCUDA-inspired CUDA kernel overlay semantics (CUDA optimization signal + coverage dimensions + strict confirm advice + route invariance).
 - `vibe-observability-gate.ps1`: validates observability policy behavior (privacy-safe telemetry fields + profile IDs + deterministic route event capture).
 - `vibe-heartbeat-gate.ps1`: validates heartbeat runtime guard behavior (lifecycle pulse collection, strict stall signaling, and policy-off disable semantics).
-- `vibe-routing-probe-trace.ps1`: runs multi-case route probes and emits per-stage data-flow traces plus runtime-state prompts to inspect pack and overlay injection behavior end-to-end.
+- `probe-scientific-packs.ps1`: runs a pack-focused scientific routing probe matrix and emits report-ready Markdown/JSON summaries for pack-selection validation.
 - `vibe-routing-probe-research.ps1`: runs a larger engineering research matrix (ambiguous vs specific vs overlay-targeted cases), validates stage-chain integrity, summarizes overlay injection statistics, and emits report-ready Markdown/JSON artifacts.
 - `vibe-deep-discovery-gate.ps1`: validates Deep Discovery mode semantics across `off/shadow/soft/strict` (trigger/interview/contract/filter, route mutation boundaries, and fallback safety).
 - `vibe-deep-discovery-scenarios.ps1`: executes multi-scenario Deep Discovery probe runs and outputs stage integrity, contract completeness, filter-application status, and runtime digest snapshots for engineering analysis.
-- `vibe-overlay-threshold-sensitivity-scan.ps1`: runs 0.05-step sensitivity scan for overlay `signal_relaxed_min_score` (`data_scale`, `framework_interop`, `ml_lifecycle`) and outputs an optimal-threshold recommendation table (optionally applies to config + bundled config).
+- `vibe-router-contract-gate.ps1`: validates router contract invariants, advice shape, and governed route output structure before higher-layer rollout or promotion work.
+
+## Wave40-63 Gates (Stop-Ship / Governance)
+
+- `vibe-bom-frontmatter-gate.ps1`: validates frontmatter-sensitive files (`SKILL.md` 等) 在 byte 0 直接可见 `---`，并检查 UTF-8 BOM 是否会遮挡解析器。
+- `vibe-wave40-63-board-gate.ps1`: validates the formal Wave40-63 execution board, contiguous wave coverage, bound gates, and required evidence assets.
+- `vibe-capability-dedup-gate.ps1`: validates capability dedup clusters, canonical owners, overlap closure anchors, and dedup governance evidence.
+- `vibe-adaptive-routing-readiness-gate.ps1`: validates adaptive routing shadow-ready governance, replay contract linkage, telemetry presence, and readiness support assets.
+- `vibe-upstream-value-ops-gate.ps1`: validates continuous value-extraction workstreams, quality-bar linkage, and upstream value-ops evidence coverage.
+
+### Quick Start (Wave40-63)
+
+Run the runtime-hardening gate first, then the Wave40-63 governance closure gates:
+
+```powershell
+& ".\\vibe-bom-frontmatter-gate.ps1" -WriteArtifacts
+& ".\\vibe-wave40-63-board-gate.ps1" -WriteArtifacts
+& ".\\vibe-capability-dedup-gate.ps1" -WriteArtifacts
+& ".\\vibe-adaptive-routing-readiness-gate.ps1" -WriteArtifacts
+& ".\\vibe-upstream-value-ops-gate.ps1" -WriteArtifacts
+```
 
 Related rollout utility:
 
@@ -87,6 +142,27 @@ Run version + packaging governance gate:
 ```powershell
 & ".\vibe-version-packaging-gate.ps1" -WriteArtifacts
 ```
+
+Run repo cleanliness gate (local hygiene first):
+
+```powershell
+& ".\..\governance\install-local-worktree-excludes.ps1"
+& ".\vibe-repo-cleanliness-gate.ps1" -WriteArtifacts
+& ".\vibe-output-artifact-boundary-gate.ps1" -WriteArtifacts
+```
+
+Run installed runtime freshness gate (canonical repo only):
+
+```powershell
+& ".\vibe-installed-runtime-freshness-gate.ps1" -TargetRoot "$env:USERPROFILE\.codex" -WriteReceipt
+```
+
+Notes:
+- `vibe-version-consistency-gate.ps1`, `vibe-version-packaging-gate.ps1`, `vibe-config-parity-gate.ps1`, `release-cut.ps1`, and `sync-bundled-vibe.ps1` are protected by the execution-context lock and must run from the canonical repo tree.
+- Runtime freshness is a separate post-install governance layer; it does not replace repo parity gates.
+- Installed-runtime directory comparisons inherit `packaging.allow_bundled_only`, so intentionally packaged bundled-only files remain allowed after install.
+- `check.ps1` / `check.sh` now verify the runtime freshness receipt and invoke the freshness gate when canonical repo execution is available.
+- In shell-only environments without `pwsh`, `check.sh` warns and skips authoritative runtime freshness execution instead of emitting a false receipt hard-fail.
 
 Run OpenSpec governance gate:
 
@@ -184,10 +260,10 @@ Run heartbeat gate:
 & ".\vibe-heartbeat-gate.ps1"
 ```
 
-Run route probe trace (white-box data-flow inspection):
+Run scientific pack probe (pack-focused route study):
 
 ```powershell
-& ".\vibe-routing-probe-trace.ps1" -IncludePrompt
+& ".\probe-scientific-packs.ps1" -DefaultIncludePrompt
 ```
 
 Run route probe research matrix (engineering report):
@@ -210,10 +286,10 @@ Run Deep Discovery scenarios:
 & ".\vibe-deep-discovery-scenarios.ps1" -Mode strict
 ```
 
-Run overlay threshold sensitivity scan (0.05 step):
+Run router contract gate:
 
 ```powershell
-& ".\vibe-overlay-threshold-sensitivity-scan.ps1" -Step 0.05
+& ".\vibe-router-contract-gate.ps1" -WriteArtifacts
 ```
 
 Keep generated fixture files for manual inspection:
@@ -239,6 +315,17 @@ Interpretation:
 - `context_pressure` delta < 0 is better.
 - `route_gap` delta > 0 usually means better route separability.
 
+## Additional Governance / Utility Gates
+
+- `vibe-manual-apply-policy-gate.ps1`: validates manual apply policy boundaries and exception handling.
+- `vibe-release-evidence-bundle-gate.ps1`: validates release evidence bundle completeness.
+- `vibe-rollout-proposal-boundedness-gate.ps1`: validates rollout proposals stay bounded and evidence-backed.
+- `vibe-upstream-reaudit-matrix-gate.ps1`: validates upstream re-audit matrix completeness and linkage.
+- `vibe-ops-dashboard-gate.ps1`: validates ops dashboard governance assets.
+- `vibe-wave83-100-closure-gate.ps1`: validates Wave83-100 closure board and evidence completeness.
+- `vibe-subagent-handoff-gate.ps1`: validates subagent handoff governance artifacts.
+- `vibe-secret-scan.ps1`: lightweight secret scanning utility for governed verification runs.
+- `vibe-generate-skills-lock.ps1`: emits / validates generated skills lock metadata.
 ## External Corpus Gate
 
 Build candidate suggestions from external prompt corpus and evaluate them safely:
@@ -286,3 +373,123 @@ Build environment/user-profile-aware threshold suggestions from telemetry (manua
 Output artifacts:
 - `outputs/learn/vibe-adaptive-suggestions.json`
 - `outputs/learn/vibe-adaptive-suggestions.md`
+
+## Wave19-30 Governance Gates
+
+新增的 Wave19-30 门禁如下：
+
+```powershell
+& ".\vibe-ecosystem-absorption-contract-gate.ps1"
+& ".\vibe-memory-tier-gate.ps1"
+& ".\vibe-mem0-backend-gate.ps1"
+& ".\vibe-letta-contract-gate.ps1"
+& ".\vibe-prompt-intelligence-assets-gate.ps1"
+& ".\vibe-browserops-gate.ps1"
+& ".\vibe-desktopops-shadow-gate.ps1"
+& ".\vibe-cross-plane-conflict-gate.ps1"
+& ".\vibe-promotion-board-gate.ps1"
+& ".\vibe-pilot-scenarios.ps1"
+```
+
+建议执行顺序：
+1. admission / memory / prompt 基础 gates
+2. browser / desktop / conflict gates
+3. promotion board / pilot gates
+4. config parity / version packaging gates
+
+
+## Wave19-30 Absorption Gates
+
+Run ecosystem admission and new four-plane governance gates:
+
+```powershell
+& ".\vibe-ecosystem-absorption-contract-gate.ps1"
+& ".\vibe-memory-tier-gate.ps1"
+& ".\vibe-mem0-backend-gate.ps1"
+& ".\vibe-letta-contract-gate.ps1"
+& ".\vibe-prompt-intelligence-assets-gate.ps1"
+& ".\vibe-browserops-gate.ps1"
+& ".\vibe-desktopops-shadow-gate.ps1"
+& ".\vibe-cross-plane-conflict-gate.ps1"
+& ".\vibe-promotion-board-gate.ps1"
+& ".\vibe-pilot-scenarios.ps1"
+```
+
+Recommended sequence for Wave29-30 packaging closure:
+
+```powershell
+& ".\vibe-config-parity-gate.ps1"
+& ".\vibe-version-packaging-gate.ps1"
+```
+
+## Wave31-33 Governance Gates
+
+Mirror topology and runtime coherence additions:
+
+```powershell
+& ".\vibe-nested-bundled-parity-gate.ps1" -WriteArtifacts
+& ".\vibe-mirror-edit-hygiene-gate.ps1" -WriteArtifacts
+& ".\vibe-release-install-runtime-coherence-gate.ps1" -TargetRoot "$env:USERPROFILE\.codex" -WriteArtifacts
+```
+
+Operational notes:
+
+- `vibe-nested-bundled-parity-gate.ps1` is the blocking gate for `nested_bundled` drift.
+- `vibe-mirror-edit-hygiene-gate.ps1` is intended for dirty-tree / PR hygiene; it may fail while mirror sync is intentionally pending.
+- `vibe-release-install-runtime-coherence-gate.ps1` checks the config + docs + install/check script contract for release/install/runtime boundaries.
+- `check.ps1` and `check.sh` invoke runtime freshness and coherence; they do **not** invoke mirror edit hygiene by default.
+- runtime freshness and coherence stay authoritative only when the scripts run from the canonical repo root.
+
+## Wave34-39 Governance Gates
+
+Upstream corpus / productization / release-closure additions:
+
+```powershell
+& ".\vibe-upstream-corpus-manifest-gate.ps1" -WriteArtifacts
+& ".\vibe-upstream-mirror-freshness-gate.ps1" -WriteArtifacts
+& ".\vibe-docling-contract-gate.ps1" -WriteArtifacts
+& ".\vibe-connector-admission-gate.ps1" -WriteArtifacts
+& ".\vibe-role-pack-governance-gate.ps1" -WriteArtifacts
+& ".\vibe-capability-catalog-gate.ps1" -WriteArtifacts
+& ".\vibe-promotion-board-gate.ps1" -WriteArtifacts
+& ".\vibe-pilot-scenarios.ps1"
+& ".\vibe-deep-extraction-pilot-gate.ps1" -WriteArtifacts
+```
+
+Operational notes:
+
+- `vibe-upstream-corpus-manifest-gate.ps1` and `vibe-upstream-mirror-freshness-gate.ps1` together define the 15-project corpus baseline plus runtime mirror freshness evidence.
+- `vibe-docling-contract-gate.ps1`, `vibe-connector-admission-gate.ps1`, `vibe-role-pack-governance-gate.ps1`, and `vibe-capability-catalog-gate.ps1` validate that absorbed value lands as governance/product surfaces rather than second execution owners.
+- `vibe-promotion-board-gate.ps1` is the bridge from Wave31-38 governance assets into Wave39 release evidence; it should be part of release-cut, not an optional afterthought.
+- `vibe-pilot-scenarios.ps1` covers the execution-plane fixtures plus `pilot-deep-extraction.json`; `vibe-deep-extraction-pilot-gate.ps1` is the release-closure rollup gate.
+
+## Quick Start (Wave64-82)
+
+Run the Wave64-82 gate chain after the prior runtime / Wave40-63 gates are green:
+
+```powershell
+& ".\vibe-memory-runtime-v3-gate.ps1" -WriteArtifacts
+& ".\vibe-mem0-softrollout-gate.ps1" -WriteArtifacts
+& ".\vibe-letta-policy-conformance-gate.ps1" -WriteArtifacts
+& ".\vibe-browserops-scorecard-gate.ps1" -WriteArtifacts
+& ".\vibe-browserops-softrollout-gate.ps1" -WriteArtifacts
+& ".\vibe-desktopops-replay-gate.ps1" -WriteArtifacts
+& ".\vibe-desktopops-softrollout-gate.ps1" -WriteArtifacts
+& ".\vibe-docling-contract-v2-gate.ps1" -WriteArtifacts
+& ".\vibe-document-plane-benchmark-gate.ps1" -WriteArtifacts
+& ".\vibe-connector-scorecard-gate.ps1" -WriteArtifacts
+& ".\vibe-connector-action-ledger-gate.ps1" -WriteArtifacts
+& ".\vibe-prompt-intelligence-productization-gate.ps1" -WriteArtifacts
+& ".\vibe-cross-plane-task-contract-gate.ps1" -WriteArtifacts
+& ".\vibe-cross-plane-replay-gate.ps1" -WriteArtifacts
+& ".\vibe-promotion-scorecard-gate.ps1" -WriteArtifacts
+& ".\vibe-ops-cockpit-gate.ps1" -WriteArtifacts
+& ".\vibe-rollback-drill-gate.ps1" -WriteArtifacts
+& ".\vibe-release-train-v2-gate.ps1" -WriteArtifacts
+```
+
+Run closure only after the board is marked complete:
+
+```powershell
+& ".\vibe-wave64-82-closure-gate.ps1" -WriteArtifacts
+```

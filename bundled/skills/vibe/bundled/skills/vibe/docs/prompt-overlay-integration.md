@@ -2,36 +2,49 @@
 
 ## Purpose
 
-Integrate `prompts.chat` as a prompt asset layer in VCO without introducing a second orchestrator.
+Integrate prompt assets into VCO without introducing a second orchestrator or a second prompt control surface.
 
-This overlay is designed to:
+This overlay family is designed to:
 - Keep `/vibe` as the only routing entrypoint
 - Provide prompt-template discovery/refinement hints post-route
 - Reduce prompt-vs-doc routing ambiguity through semantic confirm gates
+- Absorb `Prompt-Engineering-Guide` as pattern/risk/governance assets, not as a parallel prompt router
+
+## Prompt Plane Layers
+
+VCO prompt plane now has three governed layers:
+
+1. **Prompt overlay** — `prompts.chat`-style prompt asset discovery and ambiguity guard
+2. **Prompt asset boost** — GPT-5.2 × prompt assets协作增强，输出候选 prompt advice
+3. **Prompt intelligence** — `Prompt-Engineering-Guide` 吸收后的 pattern cards、risk checklist、policy contract
+
+对应资产：
+- `config/prompt-overlay.json`
+- `config/prompt-asset-boost.json`
+- `config/prompt-intelligence-policy.json`
+- `references/prompt-pattern-cards.md`
+- `references/prompt-risk-checklist.md`
+- `docs/prompt-intelligence-governance.md`
 
 ## Non-Redundancy Boundaries
 
 1. **Single routing authority**: VCO pack router remains the control plane.
-2. **Post-route advisory/guard only**: overlay emits `prompt_overlay_advice`; it does not replace pack selection.
-3. **No second workflow surface**: no `/prompts:*` lifecycle is introduced into VCO.
-4. **Asset-plane responsibility**: prompts.chat is used for prompt assets (template/rewrite/publish), not general API docs retrieval.
+2. **Post-route advisory/guard only**: prompt layers emit advice metadata; they do not replace pack selection.
+3. **No second workflow surface**: no new `/prompt:*` lifecycle is introduced into VCO.
+4. **Asset-plane responsibility**: prompt assets are used for template/rewrite/chaining/risk analysis, not for general docs retrieval or route takeover.
+5. **Pattern, not power**: `Prompt-Engineering-Guide` enriches prompt thinking, but cannot widen route authority beyond configured caps.
 
 ## Config
 
-Primary policy file:
+Primary policy files:
 - `config/prompt-overlay.json`
+- `config/prompt-asset-boost.json`
+- `config/prompt-intelligence-policy.json`
 
 Bundled mirror:
 - `bundled/skills/vibe/config/prompt-overlay.json`
-
-Key fields:
-- `enabled`, `mode` (`off|shadow|soft|strict`)
-- `task_allow` (default: `planning`, `research`)
-- `grade_allow` (default: `M`, `L`, `XL`)
-- `confirm_scope` (where ambiguity can escalate to `confirm_required`)
-- `prompt_signal_keywords`
-- `doc_surface_keywords`
-- `intent_facets` (`template_seek`, `prompt_refine`, `prompt_publish`)
+- `bundled/skills/vibe/config/prompt-asset-boost.json`
+- `bundled/skills/vibe/config/prompt-intelligence-policy.json`
 
 ## Runtime Behavior
 
@@ -40,13 +53,15 @@ Router file:
 
 Output additions:
 - `prompt_overlay_advice`
+- `prompt_asset_boost_advice`
+- `prompt_intelligence_advice`
 - `prompt_overlay_route_override`
 
 Semantics:
 - In `shadow`: advisory only.
-- In `soft`: if prompt/doc collision is detected within `confirm_scope`, route is upgraded to `confirm_required`.
-- In `strict`: same collision triggers `confirm_required`; prompt-heavy in-scope requests become `required` in advice metadata.
-- Outside collision conditions, routing remains unchanged.
+- In `soft`: prompt/doc collision or high-risk prompt scenario can upgrade route to `confirm_required` within configured scope.
+- In `strict`: same collision triggers `confirm_required`; prompt-heavy in-scope requests become `required` only in advice metadata.
+- Outside configured collision/risk conditions, routing remains unchanged.
 
 ## Conflict Control
 
@@ -54,18 +69,22 @@ To avoid prompt/doc cross-talk:
 - `prompt-lookup` gains stronger prompt-intent positive keywords.
 - `prompt-lookup` gets doc-surface negative keywords.
 - `openai-docs` / `documentation-lookup` / `openai-knowledge` receive prompt-intent negative keywords.
+- Prompt intelligence only injects cards/checklists/reference text; it does not replace the selected pack/skill.
 
 This ensures:
 - prompt template/refine requests prefer `prompt-lookup`
 - official API/doc requests stay in doc-focused skills
 - ambiguous requests are explicitly confirmed instead of silently misrouted
+- high-risk prompt constructions get extra checklist coverage without adding a second control surface
 
 ## Verification
 
-Run dedicated overlay gate:
+Run dedicated overlay gates:
 
 ```powershell
 pwsh -File .\scripts\verify\vibe-prompt-overlay-gate.ps1
+pwsh -File .\scripts\verify\vibe-prompt-asset-boost-gate.ps1
+pwsh -File .\scripts\verify\vibe-prompt-intelligence-assets-gate.ps1
 ```
 
 Run parity gate (main vs bundled config):
@@ -80,5 +99,24 @@ Overlay failures are non-fatal by default:
 - missing config -> bypass overlay advice
 - policy disabled -> no effect on route decision
 - no prompt signals -> no overlay-driven escalation
+- asset retrieval failure -> keep selected route and emit empty or degraded advice object
 
-Only prompt/doc ambiguity in configured scope can enforce `confirm_required`.
+Only configured prompt/doc ambiguity or high-risk prompt scenarios can enforce `confirm_required`.
+
+## Wave23 Prompt Intelligence Extension
+
+为吸收 `Prompt-Engineering-Guide`，VCO 新增 **Prompt Intelligence** 资产层，但仍保持 prompt overlay 为 post-route advisory path。
+
+新增资产：
+- `references/prompt-pattern-cards.md`
+- `references/prompt-risk-checklist.md`
+- `docs/prompt-intelligence-governance.md`
+- `config/prompt-intelligence-policy.json`
+
+关键约束：
+1. `allow_route_override = false`
+2. `allow_second_prompt_surface = false`
+3. Prompt intelligence 只能注入 pattern / checklist / risk reference，不得替换 selected pack/skill。
+
+新增门禁：
+- `pwsh -File .\scripts\verify\vibe-prompt-intelligence-assets-gate.ps1`

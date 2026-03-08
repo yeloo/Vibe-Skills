@@ -24,17 +24,15 @@ function Read-Text {
     return Get-Content -LiteralPath $Path -Raw -Encoding UTF8
 }
 
-$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-$governancePath = Join-Path $repoRoot "config\version-governance.json"
-
+. (Join-Path $PSScriptRoot "..\common\vibe-governance-helpers.ps1")
+$context = Get-VgoGovernanceContext -ScriptPath $PSCommandPath -EnforceExecutionContext
+$repoRoot = $context.repoRoot
+$governancePath = $context.governancePath
+$governance = $context.governance
+$canonicalRoot = $context.canonicalRoot
+$bundledRoot = $context.bundledRoot
+$nestedBundledRoot = $context.nestedBundledRoot
 Write-Host "=== VCO Version Consistency Gate ==="
-
-if (-not (Test-Path -LiteralPath $governancePath)) {
-    Write-Host "[FAIL] version-governance config missing: $governancePath" -ForegroundColor Red
-    exit 1
-}
-
-$governance = Get-Content -LiteralPath $governancePath -Raw -Encoding UTF8 | ConvertFrom-Json
 $releaseVersion = [string]$governance.release.version
 $releaseUpdated = [string]$governance.release.updated
 $maintenanceFiles = @($governance.version_markers.maintenance_files)

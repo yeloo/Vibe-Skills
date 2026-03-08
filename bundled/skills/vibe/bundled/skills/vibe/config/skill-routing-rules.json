@@ -159,6 +159,68 @@
                                                                               "research"
                                                                           ]
                                                },
+                   "scrapling":  {
+                                    "task_allow":  [
+                                                       "coding",
+                                                       "debug",
+                                                       "research"
+                                                   ],
+                                    "positive_keywords":  [
+                                                             "scrapling",
+                                                             "web scraping",
+                                                             "scrape",
+                                                             "scraping",
+                                                             "crawl",
+                                                             "crawler",
+                                                             "spider",
+                                                             "css selector",
+                                                             "css-selector",
+                                                             "xpath",
+                                                             "xpath selector",
+                                                             "cf-turnstile",
+                                                             "turnstile",
+                                                             "cloudflare",
+                                                             "cloudflare challenge",
+                                                             "captcha",
+                                                             "anti-bot",
+                                                             "爬虫",
+                                                             "网页抓取",
+                                                             "抓取网页",
+                                                             "网页采集",
+                                                             "反爬",
+                                                             "CSS选择器",
+                                                             "XPath选择器"
+                                                         ],
+                                    "negative_keywords":  [
+                                                             "web search",
+                                                             "search query",
+                                                             "serp",
+                                                             "搜索引擎",
+                                                             "research-lookup",
+                                                             "perplexity",
+                                                             "sonar",
+                                                             "openalex",
+                                                             "pubmed",
+                                                             "arxiv",
+                                                             "citation",
+                                                             "bibtex",
+                                                             "references",
+                                                             "文献",
+                                                             "参考文献",
+                                                             "引用",
+                                                             "plotly",
+                                                             "matplotlib",
+                                                             "seaborn",
+                                                             "可视化",
+                                                             "图表",
+                                                             "绘图"
+                                                         ],
+                                    "equivalent_group":  "web-scraping",
+                                    "canonical_for_task":  [
+                                                              "coding",
+                                                              "research"
+                                                          ]
+                                },
                    "deepagent-toolchain-plan":  {
                                                    "task_allow":  [
                                                                       "planning",

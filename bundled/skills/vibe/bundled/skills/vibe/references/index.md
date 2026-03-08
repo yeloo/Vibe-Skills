@@ -1,70 +1,116 @@
-# VCO v2.0 References Index
+# VCO References Index
 
-Navigation guide for all VCO (Vibe Code Orchestrator) documentation.
+Navigation guide for VCO contracts, registries, matrices, ledgers, scenarios, and overlay reference packs.
 
-## Core Documents
+## Start Here
 
-| Document | Purpose |
-|----------|---------|
-| [tool-registry.md](tool-registry.md) | Capabilities, APIs, and state paths of all 6 integrated tools |
-| [conflict-rules.md](conflict-rules.md) | 3 conflict avoidance rules (agent boundary, memory division, command priority) |
-| [fallback-chains.md](fallback-chains.md) | Error recovery: M/L=2-level, XL=3-level degradation paths |
-| [team-templates.md](team-templates.md) | 6 predefined team compositions for XL-grade tasks |
-| [extending-vco.md](extending-vco.md) | Guide for adding new tools or adapting to tool updates |
-| [../docs/skills-consolidation-roadmap.md](../docs/skills-consolidation-roadmap.md) | Consolidation phases, quality gates, rollback strategy |
-| [../docs/skills-consolidation-batch-plan.md](../docs/skills-consolidation-batch-plan.md) | Batch-by-batch migration execution plan |
-| [../docs/soft-migration-playbook.md](../docs/soft-migration-playbook.md) | Practical validation checklist for soft migration |
-| [../docs/hard-migration-batch-a-report.md](../docs/hard-migration-batch-a-report.md) | Batch A hard migration execution and verification report |
-| [../docs/context-retro-advisor-design.md](../docs/context-retro-advisor-design.md) | Retro-only integration design for Agent-Skills context expert guidance |
-| [../docs/gsd-vco-overlay-integration.md](../docs/gsd-vco-overlay-integration.md) | GSD-Lite overlay design (post-route planning hook, non-redundant integration) |
-| [../docs/memory-governance-integration.md](../docs/memory-governance-integration.md) | Memory governance design (state_store/Serena/ruflo/Cognee boundaries + episodic disablement) |
-| [../docs/prompt-overlay-integration.md](../docs/prompt-overlay-integration.md) | prompts.chat prompt-asset overlay design (post-route ambiguity guard, non-redundant integration) |
-| [../docs/data-scale-overlay-integration.md](../docs/data-scale-overlay-integration.md) | Data-scale overlay design (real file probe + spreadsheet/xlsx/xan adaptive selection) |
-| [../docs/quality-debt-overlay-integration.md](../docs/quality-debt-overlay-integration.md) | Quality-debt overlay design (fuck-u-code inspired post-route advisory, no route mutation) |
-| [../docs/framework-interop-overlay-integration.md](../docs/framework-interop-overlay-integration.md) | Framework-interop overlay design (ivy-inspired cross-framework advisory, no route mutation) |
-| [../docs/ml-lifecycle-overlay-integration.md](../docs/ml-lifecycle-overlay-integration.md) | ML lifecycle overlay design (Made-With-ML inspired post-route stage/evidence advisory) |
-| [../docs/python-clean-code-overlay-integration.md](../docs/python-clean-code-overlay-integration.md) | Python clean-code overlay design (clean-code-python inspired post-route advisory, no route mutation) |
-| [../docs/system-design-overlay-integration.md](../docs/system-design-overlay-integration.md) | System-design overlay design (system-design-primer inspired architecture coverage advisory, no route mutation) |
-| [../docs/cuda-kernel-overlay-integration.md](../docs/cuda-kernel-overlay-integration.md) | CUDA kernel overlay design (LeetCUDA inspired post-route kernel optimization advisory, no route mutation) |
-| [../docs/agency-agents-overlay.md](../docs/agency-agents-overlay.md) | External expert prompt overlays: agency-agents departments (advice-only, auto-suggest → confirm → inject) |
-| [../docs/gitnexus-overlay.md](../docs/gitnexus-overlay.md) | External expert prompt overlays: GitNexus foundation (code understanding / impact / change awareness, advice-only) |
-| [../docs/gitnexus-mcp-integration-draft.md](../docs/gitnexus-mcp-integration-draft.md) | GitNexus MCP integration draft (Codex CLI `codex mcp add`, indexing, governance, fallback) |
-| [../docs/gitnexus-execution-checklist.md](../docs/gitnexus-execution-checklist.md) | GitNexus × Codex CLI × VCO execution checklist (install → index → verify → overlay injection) |
-| [../docs/turix-cua-overlay.md](../docs/turix-cua-overlay.md) | UI automation overlays: TuriX‑CUA Computer Use Agent (CUA vs Playwright vs API decision tree, advice-only) |
-| [../docs/observability-consistency-governance.md](../docs/observability-consistency-governance.md) | Strict observability/consistency governance (lean telemetry + manual rollback confirmation policy) |
-| [../docs/ai-rerank-overlay-integration.md](../docs/ai-rerank-overlay-integration.md) | AI rerank B+ overlay design (Top-K constrained ambiguity rerank with shadow-safe rollout) |
-| [../docs/retrieval-overlay-integration.md](../docs/retrieval-overlay-integration.md) | Retrieval overlay design (profile-guided query/source/rerank strategy with mode-gated advisory enforcement) |
-| [../docs/exploration-overlay-integration.md](../docs/exploration-overlay-integration.md) | Exploration overlay design (intent/domain advisory for exploratory and mixed-domain prompts with soft-first confirmation) |
-| [../docs/blackbox-probe-and-enhancement-playbook.md](../docs/blackbox-probe-and-enhancement-playbook.md) | Unified playbook for blackbox route probing, user semantic overlay expansion, and threshold sensitivity tuning |
-| [../docs/deep-discovery-mode-design.md](../docs/deep-discovery-mode-design.md) | Deep Discovery mode design (trigger/interview/contract/filter prepack chain with probe-visible data contracts) |
-| [../docs/heartbeat-runtime-integration.md](../docs/heartbeat-runtime-integration.md) | Heartbeat runtime integration design (anti-silent-execution watchdog with stall diagnosis and progress telemetry) |
-| [../docs/heartbeat-unified-vibe-entry-recheck-2026-02-27.md](../docs/heartbeat-unified-vibe-entry-recheck-2026-02-27.md) | Unified `$vibe` entry recheck report for heartbeat trigger correctness and strict escalation validation |
-| [../docs/version-packaging-governance.md](../docs/version-packaging-governance.md) | Version/source-of-truth governance and canonical-bundled packaging mirror workflow |
-| [../docs/releases/v2.3.28.md](../docs/releases/v2.3.28.md) | Release notes for TurboMax acceleration overlays + prompt asset boost + UI computer use overlays + scholarly publishing/figures/reporting routing |
-| [../docs/releases/v2.3.24.md](../docs/releases/v2.3.24.md) | Release note template instance and migration notes for governance hardening |
-| [../docs/router-modularization-governance.md](../docs/router-modularization-governance.md) | Router modularization governance (legacy-vs-modular contract gate + zero-regression rollout discipline) |
-| [../templates/cer-report.md.template](../templates/cer-report.md.template) | CER markdown template for human-readable retro reports |
-| [../templates/cer-report.json.template](../templates/cer-report.json.template) | CER JSON template for machine analytics and comparison |
-| [../templates/cer-report.schema.json](../templates/cer-report.schema.json) | CER JSON schema for validation gates |
-| [changelog.md](changelog.md) | Version history |
-| [release-ledger.jsonl](release-ledger.jsonl) | Immutable release ledger (one JSON record per release cut) |
+| Asset | Purpose |
+| --- | --- |
+| [reference-asset-taxonomy.md](reference-asset-taxonomy.md) | `references/` 的正式分类、命名约定与维护规则 |
+| [unified-task-contract.md](unified-task-contract.md) | 跨平面任务合同的 cleanup-first 入口 |
+| [mirror-topology.md](mirror-topology.md) | canonical / bundled / nested mirror topology 参考基线 |
+| [changelog.md](changelog.md) | 参考层变更账本与长期演进轨迹 |
+| [../docs/README.md](../docs/README.md) | 治理正文 / 集成说明 / plans / releases 总入口 |
+| [../scripts/verify/gate-family-index.md](../scripts/verify/gate-family-index.md) | `scripts/verify/` gate family 导航与推荐运行顺序 |
+| [../docs/plans/2026-03-08-repo-cleanliness-batch2-4-triage.md](../docs/plans/2026-03-08-repo-cleanliness-batch2-4-triage.md) | cleanup-first 的 Batch 2-4 拆分与 stop rules |
+| [../docs/plans/2026-03-08-repo-full-cleanup-master-plan.md](../docs/plans/2026-03-08-repo-full-cleanup-master-plan.md) | full-repo cleanup umbrella plan；定义 batch0-9 的 plane-governance 收口顺序 |
+| [fixtures/README.md](fixtures/README.md) | fixture migration stage2 的 baseline / migration map 入口 |
+| [overlays/index.md](overlays/index.md) | overlay reference packs 的统一导航入口 |
 
-## Protocol Specifications
+## Contracts / Handbooks
 
-| Protocol | Document | When Loaded |
-|----------|----------|-------------|
-| vibe-think | [protocols/think.md](../protocols/think.md) | Planning, design, research (L grade) |
-| vibe-do | [protocols/do.md](../protocols/do.md) | Coding, debugging (L grade) |
-| vibe-review | [protocols/review.md](../protocols/review.md) | Code review, security audit (M/L/XL) |
-| vibe-team | [protocols/team.md](../protocols/team.md) | XL multi-agent coordination |
-| vibe-retro | [protocols/retro.md](../protocols/retro.md) | Workflow review and improvement |
+| Asset | Purpose |
+| --- | --- |
+| [unified-task-contract.md](unified-task-contract.md) | VCO 统一任务合同 |
+| [tool-rule-contract.md](tool-rule-contract.md) | 工具 / 规则约束合同 |
+| [memory-block-contract.md](memory-block-contract.md) | memory block / tier 结构合同 |
+| [memory-runtime-v3-contract.md](memory-runtime-v3-contract.md) | memory runtime v3 合同 |
+| [browser-task-contract.md](browser-task-contract.md) | browser task contract |
+| [openworld-task-contract.md](openworld-task-contract.md) | open-world runtime task contract |
+| [gate-keyword-alias-contract.md](gate-keyword-alias-contract.md) | gate/document keyword alias contract |
+| [eval-replay-ledger-contract.md](eval-replay-ledger-contract.md) | replay / audit ledger contract |
+| [conflict-rules.md](conflict-rules.md) | 跨平面冲突仲裁手册 |
+| [manual-apply-checklist.md](manual-apply-checklist.md) | 手工 apply / exception checklist |
+
+## Registries / Catalogs
+
+| Asset | Purpose |
+| --- | --- |
+| [tool-registry.md](tool-registry.md) | VCO tool registry |
+| [capability-catalog.md](capability-catalog.md) | capability surface 总目录 |
+| [role-pack-catalog.md](role-pack-catalog.md) | role-pack v1 catalog |
+| [role-pack-catalog-v2.md](role-pack-catalog-v2.md) | role-pack v2 catalog |
+| [discovery-intake-watchlist.md](discovery-intake-watchlist.md) | discovery intake watchlist |
+| [connector-capability-matrix.md](connector-capability-matrix.md) | connector 与 capability 的映射入口 |
+
+## Matrices / Scorecards
+
+| Asset | Purpose |
+| --- | --- |
+| [connector-admission-matrix.md](connector-admission-matrix.md) | connector admission 决策矩阵 |
+| [capability-dedup-matrix.md](capability-dedup-matrix.md) | capability overlap / owner / dedup 基线 |
+| [capability-lifecycle-matrix.md](capability-lifecycle-matrix.md) | capability lifecycle 状态矩阵 |
+| [candidate-quality-scorecards.md](candidate-quality-scorecards.md) | candidate 质量评分 |
+| [browser-provider-scorecard.md](browser-provider-scorecard.md) | browser provider 评分卡 |
+| [plane-scorecards.md](plane-scorecards.md) | memory / browser / desktop / document 等平面评分卡 |
+| [subagent-pattern-scorecard.md](subagent-pattern-scorecard.md) | subagent pattern 质量评分 |
+| [skill-distillation-scorecard.md](skill-distillation-scorecard.md) | skill distillation 评分标准 |
+| [upstream-reaudit-matrix-v2.md](upstream-reaudit-matrix-v2.md) | upstream re-audit 矩阵 |
+
+## Ledgers / Evidence / Changelog
+
+| Asset | Purpose |
+| --- | --- |
+| [release-ledger.jsonl](release-ledger.jsonl) | release ledger |
+| [release-evidence-bundle-contract.md](release-evidence-bundle-contract.md) | release evidence bundle contract |
+| [changelog.md](changelog.md) | append-only reference changelog |
+| [connector-action-ledger.md](connector-action-ledger.md) | connector action ledger |
+| [cross-plane-replay-ledger.md](cross-plane-replay-ledger.md) | replay 证据账本 |
+| [upstream-value-ledger.md](upstream-value-ledger.md) | upstream value extraction ledger |
+| [rollout-proposal-contract.md](rollout-proposal-contract.md) | rollout proposal contract |
+
+## Scenarios / Checklists / Quality Bars
+
+| Asset | Purpose |
+| --- | --- |
+| [memory-eval-scenarios.md](memory-eval-scenarios.md) | memory quality / replay 场景 |
+| [prompt-eval-scenarios.md](prompt-eval-scenarios.md) | prompt intelligence 场景 |
+| [openworld-eval-scenarios.md](openworld-eval-scenarios.md) | open-world runtime 评测场景 |
+| [connector-simulation-scenarios.md](connector-simulation-scenarios.md) | connector sandbox / simulation 场景 |
+| [document-golden-corpus.md](document-golden-corpus.md) | 文档平面 golden corpus |
+| [document-failure-taxonomy.md](document-failure-taxonomy.md) | document failure taxonomy |
+| [prompt-risk-checklist.md](prompt-risk-checklist.md) | prompt risk checklist |
+| [upstream-distillation-quality-bar.md](upstream-distillation-quality-bar.md) | upstream distillation quality bar |
+
+## Overlay Packs
+
+| Folder | Purpose |
+| --- | --- |
+| [overlays/turix-cua](overlays/turix-cua) | BrowserOps / CUA foundation 与 runbook |
+| [overlays/gitnexus](overlays/gitnexus) | GitNexus foundation / architecture / impact / detect-changes |
+| [overlays/ruc-nlpir](overlays/ruc-nlpir) | FlashRAG / WebThinker / DeepAgent overlay references |
+| [overlays/agency](overlays/agency) | agency-style role overlays |
+
+## Wave Execution Backlog Anchors
+
+| Wave Set | Primary Assets |
+| --- | --- |
+| Wave19-30 | [../docs/plans/2026-03-07-vco-full-spectrum-integration-plan.md](../docs/plans/2026-03-07-vco-full-spectrum-integration-plan.md) |
+| Wave31-39 | [../docs/plans/2026-03-07-vco-deep-value-extraction-drift-closure-plan.md](../docs/plans/2026-03-07-vco-deep-value-extraction-drift-closure-plan.md) |
+| Wave40-63 | [../docs/plans/2026-03-07-vco-wave40-63-execution-plan.md](../docs/plans/2026-03-07-vco-wave40-63-execution-plan.md), [../config/wave40-63-planning-board.json](../config/wave40-63-planning-board.json) |
+| Wave64-82 | [../docs/plans/2026-03-07-vco-wave64-82-execution-plan.md](../docs/plans/2026-03-07-vco-wave64-82-execution-plan.md), [../config/wave64-82-planning-board.json](../config/wave64-82-planning-board.json) |
+| Wave83-100 | [../docs/plans/2026-03-07-vco-wave83-100-execution-plan.md](../docs/plans/2026-03-07-vco-wave83-100-execution-plan.md), [../docs/plans/2026-03-07-vco-wave83-100-execution-status.md](../docs/plans/2026-03-07-vco-wave83-100-execution-status.md) |
 
 ## Reading Order
 
-1. Start with `tool-registry.md` to understand what each tool provides
-2. Read `conflict-rules.md` to understand how tools coexist safely
-3. Read `fallback-chains.md` to understand error recovery
-4. Read the relevant protocol doc for your current task type
-5. Consult `team-templates.md` when planning XL-grade team tasks
-6. Consult `extending-vco.md` when adding new tools or handling updates
-7. See `changelog.md` for version history
+1. 先看 [reference-asset-taxonomy.md](reference-asset-taxonomy.md) 了解资产类型；
+2. 再看 [tool-registry.md](tool-registry.md)、[unified-task-contract.md](unified-task-contract.md)、[mirror-topology.md](mirror-topology.md)、[changelog.md](changelog.md) 建立 cleanup-first 基线；
+3. 然后按 registry / catalog 理解“当前拥有哪些能力与规则面”；
+4. 再按 matrix / scorecard 理解 admission、dedup、quality；
+5. 最后进入 contract、scenario、overlay packs 做深读。
+
+## Maintenance Rules
+
+- 新增 reference 资产必须进入本 index。
+- 新增 ledger / scorecard / contract 时，需至少补一个对应的 docs 或 gate 锚点。
+- 不把 wave 执行正文塞进 `references/`；波次执行文档只放 `docs/plans/`。

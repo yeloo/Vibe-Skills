@@ -1,7 +1,10 @@
 # TurboMax‑Balanced（Vector‑First Context）设计稿
 
-更新时间：2026-03-04  
-适用范围：仅在用户显式 `/vibe` 或 `$vibe` 时启用（`explicit_vibe_only=true`）  
+- Up: [../README.md](../README.md)
+- Index: [README.md](README.md)
+
+更新时间：2026-03-04
+适用范围：仅在用户显式 `/vibe` 或 `$vibe` 时启用（`explicit_vibe_only=true`）
 
 ## 背景 / 痛点
 

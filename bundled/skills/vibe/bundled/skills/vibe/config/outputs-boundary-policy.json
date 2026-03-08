@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "updated_at": "2026-03-08",
+  "expected_tracked_output_count": 21,
+  "allowlisted_sets": [
+    {
+      "id": "external-corpus-legacy-artifacts",
+      "classification": "legacy_candidate_artifact",
+      "migration_target": "references/fixtures/external-corpus/",
+      "patterns": [
+        "outputs/external-corpus/external-corpus-gate.json",
+        "outputs/external-corpus/external-corpus-gate.md",
+        "outputs/external-corpus/prompt-signals.json",
+        "outputs/external-corpus/skill-keyword-index.backup.json",
+        "outputs/external-corpus/skill-keyword-index.candidate.json",
+        "outputs/external-corpus/vco-suggestions.json",
+        "outputs/external-corpus/vco-suggestions.md"
+      ],
+      "rationale": "Historical external-corpus candidate artifacts remain tracked temporarily until they are migrated into references/fixtures."
+    },
+    {
+      "id": "retro-compare-safety-baselines",
+      "classification": "legacy_compare_fixture",
+      "migration_target": "references/fixtures/retro-compare/safety-gate/",
+      "patterns": [
+        "outputs/retro/compare/safety-gate/baseline-cer.json",
+        "outputs/retro/compare/safety-gate/current-cer.json",
+        "outputs/retro/compare/safety-gate/delta.json",
+        "outputs/retro/compare/safety-gate/delta.md"
+      ],
+      "rationale": "Historical context-retro safety comparison fixtures are still retained as governed baselines."
+    },
+    {
+      "id": "retro-compare-sample-baselines",
+      "classification": "legacy_compare_fixture",
+      "migration_target": "references/fixtures/retro-compare/sample-run/",
+      "patterns": [
+        "outputs/retro/compare/sample-run/baseline-cer.json",
+        "outputs/retro/compare/sample-run/current-cer.json",
+        "outputs/retro/compare/sample-run/delta.json",
+        "outputs/retro/compare/sample-run/delta.md"
+      ],
+      "rationale": "Historical retro compare sample-run fixtures remain tracked until the fixture migration stage is complete."
+    },
+    {
+      "id": "retro-compare-smoke-legacy",
+      "classification": "legacy_named_fixture",
+      "migration_target": "references/fixtures/retro-compare/smoke/",
+      "patterns": [
+        "outputs/retro/compare/smoke-temp/baseline-smoke.json",
+        "outputs/retro/compare/smoke-temp/current-smoke.json",
+        "outputs/retro/compare/smoke-temp/delta-smoke.json",
+        "outputs/retro/compare/smoke-temp/delta-smoke.md"
+      ],
+      "rationale": "The smoke-temp directory currently contains legacy comparison baselines and is tracked until it is renamed and migrated."
+    },
+    {
+      "id": "verify-routing-stability-legacy-snapshot",
+      "classification": "legacy_verify_snapshot",
+      "migration_target": "references/fixtures/verify/routing-stability/",
+      "patterns": [
+        "outputs/verify/vibe-routing-stability-gate.json",
+        "outputs/verify/vibe-routing-stability-gate.md"
+      ],
+      "rationale": "Historical routing-stability snapshots remain tracked temporarily as governed verification fixtures."
+    }
+  ],
+  "disallowed_generated_output_roots": [
+    "outputs/runtime/",
+    "outputs/telemetry/",
+    "outputs/learn/",
+    "outputs/governance/",
+    "outputs/dashboard/",
+    "outputs/release/",
+    "outputs/upstream-audit/",
+    "outputs/backups/",
+    "outputs/tmp/"
+  ],
+  "enforcement": {
+    "allow_only_listed_tracked_outputs": true,
+    "check_expected_count": true,
+    "document_migration_target": true,
+    "strict_requires_zero_tracked_outputs": false
+  },
+  "migration_stage": "stage2_mirrored",
+  "fixture_roots": [
+    "references/fixtures/external-corpus/",
+    "references/fixtures/retro-compare/",
+    "references/fixtures/verify/routing-stability/"
+  ]
+}

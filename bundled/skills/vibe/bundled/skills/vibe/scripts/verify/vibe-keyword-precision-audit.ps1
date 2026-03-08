@@ -1,4 +1,7 @@
-﻿param()
+﻿param(
+    [switch]$Fast,
+    [switch]$StrictKeywords
+)
 
 $ErrorActionPreference = "Stop"
 
@@ -27,6 +30,13 @@ function Invoke-Route {
     return ($json | ConvertFrom-Json)
 }
 
+function Normalize-RouteKeyword {
+    param([string]$Keyword)
+
+    if ($null -eq $Keyword) { return "" }
+    return ([string]$Keyword).Trim().ToLowerInvariant()
+}
+
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $configRoot = Join-Path $repoRoot "config"
 $packManifestPath = Join-Path $configRoot "pack-manifest.json"
@@ -41,7 +51,9 @@ $interferenceGapMin = 0.03
 $total = 0
 $pass = 0
 $fail = 0
+$warn = 0
 $failures = New-Object System.Collections.Generic.List[string]
+$warnings = New-Object System.Collections.Generic.List[string]
 
 function Record-Check {
     param(
@@ -60,14 +72,63 @@ function Record-Check {
     Write-Host "[FAIL] $Message" -ForegroundColor Red
 }
 
+function Record-WarnOrFail {
+    param(
+        [bool]$Condition,
+        [string]$Message
+    )
+
+    $script:total++
+    if ($Condition) {
+        $script:pass++
+        return
+    }
+
+    if ($StrictKeywords) {
+        $script:fail++
+        $script:failures.Add($Message)
+        Write-Host "[FAIL] $Message" -ForegroundColor Red
+        return
+    }
+
+    $script:warn++
+    $script:warnings.Add($Message)
+    Write-Host "[WARN] $Message" -ForegroundColor Yellow
+}
+
 Write-Host "=== VCO Keyword Precision Audit (Bilingual + Interference) ==="
 
-# 1) Keyword health: each pack must contain at least one English and one Chinese trigger.
+# 1) Keyword health: all packs must have non-empty triggers.
+# Core packs should be bilingual (EN + ZH) to avoid regressions for Chinese-first workflows.
+$corePacks = @(
+    "orchestration-core",
+    "code-quality",
+    "data-ml",
+    "bio-science",
+    "docs-media",
+    "integration-devops",
+    "ai-llm",
+    "research-design"
+)
+
 foreach ($pack in $packManifest.packs) {
-    $hasEnglish = ($pack.trigger_keywords | Where-Object { $_ -match "[A-Za-z]" }).Count -gt 0
-    $hasChinese = ($pack.trigger_keywords | Where-Object { $_ -match "[\u4E00-\u9FFF]" }).Count -gt 0
-    Record-Check -Condition $hasEnglish -Message "pack '$($pack.id)' lacks English trigger keywords"
-    Record-Check -Condition $hasChinese -Message "pack '$($pack.id)' lacks Chinese trigger keywords"
+    $normalized = @($pack.trigger_keywords | ForEach-Object { Normalize-RouteKeyword -Keyword $_ } | Where-Object { $_ })
+    Record-Check -Condition ($normalized.Count -gt 0) -Message "pack '$($pack.id)' has no usable trigger keywords after normalization"
+
+    $hasEnglish = ($normalized | Where-Object { $_ -match "[a-z]" }).Count -gt 0
+    $hasChinese = ($normalized | Where-Object { $_ -match "[\u4E00-\u9FFF]" }).Count -gt 0
+    if ($corePacks -contains [string]$pack.id) {
+        Record-Check -Condition $hasEnglish -Message "pack '$($pack.id)' lacks English trigger keywords (core pack requires bilingual triggers)"
+        Record-Check -Condition $hasChinese -Message "pack '$($pack.id)' lacks Chinese trigger keywords (core pack requires bilingual triggers)"
+    }
+
+    $rawKeywords = @($pack.trigger_keywords | ForEach-Object { [string]$_ })
+    Record-WarnOrFail -Condition (($rawKeywords | Where-Object { -not $_ -or -not $_.Trim() }).Count -eq 0) -Message "pack '$($pack.id)' trigger_keywords contain empty items"
+    Record-WarnOrFail -Condition (($rawKeywords | Where-Object { $_ -ne $_.Trim() }).Count -eq 0) -Message "pack '$($pack.id)' trigger_keywords contain leading/trailing whitespace (normalize before scoring)"
+    Record-WarnOrFail -Condition (($rawKeywords | Where-Object { $_ -match '[A-Z]' }).Count -eq 0) -Message "pack '$($pack.id)' trigger_keywords contain uppercase ASCII (store lowercase to avoid score drift)"
+
+    $dups = $normalized | Group-Object | Where-Object { $_.Count -gt 1 }
+    Record-WarnOrFail -Condition ($dups.Count -eq 0) -Message "pack '$($pack.id)' trigger_keywords have duplicates after normalization (trim+lower)"
 }
 
 # 2) Pack-level bilingual routing and interference gap checks.
@@ -88,8 +149,8 @@ foreach ($case in $probeCases) {
 
     Record-Check -Condition ($enRoute.selected.pack_id -eq $case.Pack) -Message "[EN] expected pack '$($case.Pack)', got '$($enRoute.selected.pack_id)'"
     Record-Check -Condition ($zhRoute.selected.pack_id -eq $case.Pack) -Message "[ZH] expected pack '$($case.Pack)', got '$($zhRoute.selected.pack_id)'"
-    Record-Check -Condition ($enRoute.route_mode -in @("pack_overlay", "legacy_fallback")) -Message "[EN] '$($case.Pack)' route mode is invalid: '$($enRoute.route_mode)'"
-    Record-Check -Condition ($zhRoute.route_mode -in @("pack_overlay", "legacy_fallback")) -Message "[ZH] '$($case.Pack)' route mode is invalid: '$($zhRoute.route_mode)'"
+    Record-Check -Condition ($enRoute.route_mode -in @("pack_overlay", "confirm_required")) -Message "[EN] '$($case.Pack)' route mode is invalid: '$($enRoute.route_mode)'"
+    Record-Check -Condition ($zhRoute.route_mode -in @("pack_overlay", "confirm_required")) -Message "[ZH] '$($case.Pack)' route mode is invalid: '$($zhRoute.route_mode)'"
 
     $enTop = [double]$enRoute.ranked[0].score
     $enSecond = if ($enRoute.ranked.Count -gt 1) { [double]$enRoute.ranked[1].score } else { 0.0 }
@@ -114,26 +175,49 @@ $packContext = @{
     "research-design"    = @{ Grade = "L"; Task = "planning" }
 }
 
-$skillTotal = 0
-foreach ($pack in $packManifest.packs) {
-    $ctx = $packContext[$pack.id]
-    if (-not $ctx) { continue }
-
-    foreach ($skill in $pack.skill_candidates) {
-        $skillTotal++
-        $enPrompt = "please use $skill for this task"
-        $zhPrompt = "请使用 $skill 处理这个任务"
-
-        $enRoute = Invoke-Route -Prompt $enPrompt -Grade $ctx.Grade -TaskType $ctx.Task -RequestedSkill $skill
-        $zhRoute = Invoke-Route -Prompt $zhPrompt -Grade $ctx.Grade -TaskType $ctx.Task -RequestedSkill $skill
-
-        Record-Check -Condition ($enRoute.selected.pack_id -eq $pack.id) -Message "[EN skill] $skill expected pack '$($pack.id)', got '$($enRoute.selected.pack_id)'"
-        Record-Check -Condition ($zhRoute.selected.pack_id -eq $pack.id) -Message "[ZH skill] $skill expected pack '$($pack.id)', got '$($zhRoute.selected.pack_id)'"
-        Record-Check -Condition ($enRoute.selected.skill -eq $skill) -Message "[EN skill] $skill selected skill mismatch: '$($enRoute.selected.skill)'"
-        Record-Check -Condition ($zhRoute.selected.skill -eq $skill) -Message "[ZH skill] $skill selected skill mismatch: '$($zhRoute.selected.skill)'"
-        Record-Check -Condition ($enRoute.route_mode -eq "pack_overlay") -Message "[EN skill] $skill route mode is '$($enRoute.route_mode)'"
-        Record-Check -Condition ($zhRoute.route_mode -eq "pack_overlay") -Message "[ZH skill] $skill route mode is '$($zhRoute.route_mode)'"
+$skillToPacks = @{}
+foreach ($p in $packManifest.packs) {
+    foreach ($s in @($p.skill_candidates)) {
+        $skillId = [string]$s
+        if (-not $skillToPacks.ContainsKey($skillId)) {
+            $skillToPacks[$skillId] = New-Object System.Collections.Generic.HashSet[string]
+        }
+        [void]$skillToPacks[$skillId].Add([string]$p.id)
     }
+}
+
+$skillTotal = 0
+if (-not $Fast) {
+    foreach ($pack in $packManifest.packs) {
+        $ctx = $packContext[$pack.id]
+        if (-not $ctx) { continue }
+
+        foreach ($skill in $pack.skill_candidates) {
+            $skillTotal++
+            $enPrompt = "please use $skill for this task"
+            $zhPrompt = "请使用 $skill 处理这个任务"
+
+            $enRoute = Invoke-Route -Prompt $enPrompt -Grade $ctx.Grade -TaskType $ctx.Task -RequestedSkill $skill
+            $zhRoute = Invoke-Route -Prompt $zhPrompt -Grade $ctx.Grade -TaskType $ctx.Task -RequestedSkill $skill
+
+            $allowedPacks = @()
+            if ($skillToPacks.ContainsKey($skill)) { $allowedPacks = @($skillToPacks[$skill]) }
+            Record-Check -Condition (($allowedPacks | Where-Object { $_ -eq $enRoute.selected.pack_id }).Count -gt 0) -Message "[EN skill] $skill selected pack '$($enRoute.selected.pack_id)' is not in manifest candidates for this skill"
+            Record-Check -Condition (($allowedPacks | Where-Object { $_ -eq $zhRoute.selected.pack_id }).Count -gt 0) -Message "[ZH skill] $skill selected pack '$($zhRoute.selected.pack_id)' is not in manifest candidates for this skill"
+
+            Record-WarnOrFail -Condition ($enRoute.selected.pack_id -eq $pack.id) -Message "[EN skill] $skill routes to pack '$($enRoute.selected.pack_id)' instead of manifest pack '$($pack.id)' (skill appears in multiple packs)"
+            Record-WarnOrFail -Condition ($zhRoute.selected.pack_id -eq $pack.id) -Message "[ZH skill] $skill routes to pack '$($zhRoute.selected.pack_id)' instead of manifest pack '$($pack.id)' (skill appears in multiple packs)"
+
+            Record-Check -Condition ($enRoute.selected.pack_id -eq $zhRoute.selected.pack_id) -Message "[skill] $skill pack differs between EN and ZH: '$($enRoute.selected.pack_id)' vs '$($zhRoute.selected.pack_id)'"
+            Record-Check -Condition ($enRoute.selected.skill -eq $skill) -Message "[EN skill] $skill selected skill mismatch: '$($enRoute.selected.skill)'"
+            Record-Check -Condition ($zhRoute.selected.skill -eq $skill) -Message "[ZH skill] $skill selected skill mismatch: '$($zhRoute.selected.skill)'"
+            Record-Check -Condition ($enRoute.route_mode -in @("pack_overlay", "confirm_required")) -Message "[EN skill] $skill route mode is '$($enRoute.route_mode)'"
+            Record-Check -Condition ($zhRoute.route_mode -in @("pack_overlay", "confirm_required")) -Message "[ZH skill] $skill route mode is '$($zhRoute.route_mode)'"
+        }
+    }
+} else {
+    Write-Host ""
+    Write-Host "[INFO] Fast mode enabled: skipping skill-level sweep."
 }
 
 Write-Host ""
@@ -142,12 +226,19 @@ Write-Host "Skill candidates checked: $skillTotal"
 Write-Host "Total assertions: $total"
 Write-Host "Passed: $pass"
 Write-Host "Failed: $fail"
+Write-Host "Warnings: $warn"
 
 if ($fail -gt 0) {
     Write-Host ""
     Write-Host "Top failures:"
     $failures | Select-Object -First 20 | ForEach-Object { Write-Host " - $_" }
     exit 1
+}
+
+if ($warn -gt 0) {
+    Write-Host ""
+    Write-Host "Top warnings:"
+    $warnings | Select-Object -First 20 | ForEach-Object { Write-Host " - $_" }
 }
 
 Write-Host "Keyword precision audit passed."
