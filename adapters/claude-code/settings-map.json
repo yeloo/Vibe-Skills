@@ -1,0 +1,16 @@
+{
+  "adapter_id": "claude-code",
+  "template": "config/settings.template.claude.json",
+  "target": "~/.claude/settings.json",
+  "semantics": {
+    "env.ANTHROPIC_AUTH_TOKEN": "primary provider credential",
+    "env.ANTHROPIC_BASE_URL": "provider endpoint binding",
+    "env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "host runtime behavior toggle",
+    "env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "host runtime team capability flag",
+    "hooks.PreToolUse": "host hook integration surface"
+  },
+  "notes": [
+    "This mapping is template-derived and currently preview-only.",
+    "No official repository install flow writes this target automatically."
+  ]
+}

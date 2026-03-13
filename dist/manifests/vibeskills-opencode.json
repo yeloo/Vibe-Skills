@@ -1,0 +1,37 @@
+{
+  "manifest_kind": "vibeskills-distribution-manifest",
+  "manifest_version": 1,
+  "package_id": "vibeskills-opencode",
+  "package_name": "VibeSkills for OpenCode (Not Yet Proven)",
+  "status": "not-yet-proven",
+  "runtime_role": "future-host-adapter",
+  "summary": "OpenCode is a declared universalization target, but this repository does not currently provide a replay-backed runtime closure or governed install lane for it.",
+  "truth_sources": [
+    "docs/universalization/host-capability-matrix.md",
+    "docs/universalization/platform-parity-contract.md",
+    "adapters/opencode/host-profile.json",
+    "docs/plans/2026-03-13-universal-vibeskills-execution-program.md",
+    "README.md"
+  ],
+  "host_adapter_ref": "adapters/opencode/host-profile.json",
+  "install_entrypoints": {
+    "repo_provided": [],
+    "host_managed": [
+      "all settings materialization",
+      "all plugin provisioning",
+      "all MCP registration",
+      "all provider credential storage"
+    ],
+    "notes": [
+      "OpenCode is frozen as a truthful migration target, not a governed runtime lane.",
+      "Do not market this package as supported until replay-backed proof exists."
+    ]
+  },
+  "degrade_states": {
+    "current_state": "not-yet-proven"
+  },
+  "anti_overclaim": [
+    "No official runtime closure is implied for OpenCode.",
+    "No platform parity is claimed without host-specific proof and install isolation evidence."
+  ]
+}

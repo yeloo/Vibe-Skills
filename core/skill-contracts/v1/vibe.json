@@ -1,0 +1,24 @@
+{
+  "schema_version": "skill-contract.v1",
+  "skill_id": "vibe",
+  "status": "canonical",
+  "sources": {
+    "skill_md": {
+      "primary": "bundled/skills/vibe/SKILL.md",
+      "alternates": [
+        "SKILL.md"
+      ]
+    }
+  },
+  "frontmatter": {
+    "required_keys": [
+      "name",
+      "description"
+    ],
+    "invariants": {
+      "name_equals_skill_id": true
+    }
+  },
+  "notes": "Batch A canonical contract (conservative): validate YAML frontmatter existence + name/description presence + name == skill_id, plus packaging parity with repo-root SKILL.md."
+}
+

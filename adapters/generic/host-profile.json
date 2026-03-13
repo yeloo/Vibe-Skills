@@ -1,0 +1,34 @@
+{
+  "adapter_id": "generic",
+  "host_name": "Generic Host",
+  "status": "advisory-only",
+  "runtime_role": "contract-consumer",
+  "source_evidence": [
+    "docs/plans/2026-03-13-universal-vibeskills-no-regression-migration-plan.md",
+    "docs/plans/2026-03-13-universal-vibeskills-execution-program.md"
+  ],
+  "settings_surface": {
+    "path": "host-defined",
+    "managed_by_repo": false,
+    "notes": "Generic hosts may consume canonical skill truth, but the repository makes no runtime closure claim."
+  },
+  "host_managed_surfaces": [
+    "all runtime surfaces"
+  ],
+  "capabilities": {
+    "fs.read": "host-defined",
+    "fs.write": "host-defined",
+    "shell.exec": "host-defined",
+    "mcp.client": "host-defined",
+    "settings.materialize": "unsupported",
+    "plugin.provision": "unsupported",
+    "agent.spawn": "host-defined",
+    "route.provider_call": "host-defined",
+    "route.offline_fallback": "host-defined",
+    "release.verify": "unsupported"
+  },
+  "degrade_contract": {
+    "current_state": "advisory-only"
+  },
+  "supported_platform_contracts": []
+}

@@ -1,0 +1,44 @@
+{
+  "adapter_id": "claude-code",
+  "host_name": "Claude Code",
+  "status": "preview",
+  "runtime_role": "host-adapter-preview",
+  "source_evidence": [
+    "config/settings.template.claude.json",
+    "SKILL.md",
+    "protocols/team.md"
+  ],
+  "settings_surface": {
+    "path": "~/.claude/settings.json",
+    "managed_by_repo": false,
+    "notes": "The repository ships a template, but does not currently ship a fully governed Claude Code install flow equivalent to Codex."
+  },
+  "host_managed_surfaces": [
+    "plugin enablement",
+    "hook execution environment",
+    "MCP registration",
+    "provider credentials"
+  ],
+  "capabilities": {
+    "fs.read": "expected",
+    "fs.write": "expected",
+    "shell.exec": "expected",
+    "mcp.client": "supported-with-constraints",
+    "settings.materialize": "template-only",
+    "plugin.provision": "manual-host-managed",
+    "agent.spawn": "expected",
+    "route.provider_call": "supported-with-constraints",
+    "route.offline_fallback": "expected",
+    "release.verify": "not-yet-proven"
+  },
+  "degrade_contract": {
+    "missing_plugins": "degraded-but-supported",
+    "missing_provider_credentials": "degraded-but-supported",
+    "unverified_platform_lane": "not-yet-proven"
+  },
+  "supported_platform_contracts": [
+    "adapters/claude-code/platform-windows.json",
+    "adapters/claude-code/platform-linux.json",
+    "adapters/claude-code/platform-macos.json"
+  ]
+}

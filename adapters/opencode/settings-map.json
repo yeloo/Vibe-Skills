@@ -1,0 +1,9 @@
+{
+  "adapter_id": "opencode",
+  "template": null,
+  "target": null,
+  "semantics": {},
+  "notes": [
+    "OpenCode mapping is intentionally empty until a real host contract is implemented and verified."
+  ]
+}

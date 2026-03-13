@@ -1,0 +1,78 @@
+# Platform Support Matrix
+
+> Status baseline: 2026-03-13  
+> Scope: current official runtime truth, not future marketing claims.
+
+## Purpose
+
+This document makes platform truth explicit for the universalization program.
+
+It separates:
+
+- host support
+- platform support
+- authoritative closure path
+- honest degraded path
+
+This document does **not** claim that all hosts and all platforms already have identical closure strength.
+
+## Rating Vocabulary
+
+| Status | Meaning |
+| --- | --- |
+| `full-authoritative` | official install + check + governance gates have a documented and intended closure path |
+| `supported-with-constraints` | usable path exists, but some authoritative gates or lifecycle surfaces still depend on extra prerequisites |
+| `degraded-but-supported` | installation and main runtime can work, but key governance / doctor / parity surfaces are intentionally skipped with warnings |
+| `not-yet-proven` | repo contains signals suggesting support, but no formal proof contract exists yet |
+
+## Current Truth Summary
+
+As of the current repository baseline:
+
+- Windows is the clearest official runtime path because the repo's primary governance, doctor, freshness, and coherence gates are PowerShell-first.
+- Linux can reach a strong path when `pwsh` is available, but parity is not yet formally frozen as a contract.
+- Linux without `pwsh` is an honest degraded path, not a false "full support" path.
+- macOS is logically close to the Linux shell path, but it is not yet separately frozen as a formal proof lane.
+
+## Platform Matrix
+
+| Platform | Install Surface | Check Surface | Governance / Doctor Surface | Current Rating | Notes |
+| --- | --- | --- | --- | --- | --- |
+| Windows | `install.ps1`, `one-shot-setup.ps1` | `check.ps1` | strongest current path for PowerShell-first gates | `full-authoritative` | this is the current reference closure lane |
+| Linux + `pwsh` | `install.sh`, `one-shot-setup.sh` | `check.sh` plus PowerShell-capable follow-up | can approach authoritative path if `pwsh` is provisioned | `supported-with-constraints` | needs explicit parity proof, not assumption |
+| Linux without `pwsh` | `install.sh`, `one-shot-setup.sh` | `check.sh` | PowerShell authority gates may be skipped with warnings | `degraded-but-supported` | usable, but not equal to official Windows closure |
+| macOS + `pwsh` | shell path inferred from bash tooling | partial | likely similar to Linux + `pwsh`, but not frozen | `not-yet-proven` | must not be marketed as full until proved |
+| macOS without `pwsh` | shell path inferred from bash tooling | partial | likely degraded like Linux without `pwsh` | `not-yet-proven` | must first be measured and recorded |
+
+## Host vs Platform
+
+Universalization must never collapse these two axes into one statement.
+
+Examples:
+
+- "Codex supported" is incomplete without saying whether the support claim is Windows-only, Linux-with-pwsh, or degraded.
+- "Linux supported" is incomplete without saying whether the lane is official runtime, host adapter preview, or heuristic-only.
+
+The correct statement pattern is:
+
+`<host> on <platform> => <status>`
+
+## Required Truths to Freeze Next
+
+The migration plan must freeze the following:
+
+1. Which PowerShell gates are authoritative and must be preserved.
+2. Which bash surfaces are first-class versus convenience wrappers.
+3. Which platform differences are expected and acceptable.
+4. Which missing prerequisites force support labeling down from `full-authoritative`.
+
+## Non-Regression Rule
+
+Universalization work is not allowed to weaken the current Windows official lane in order to make the matrix look cleaner.
+
+The order is:
+
+1. document truth
+2. freeze support contract
+3. close high-value parity gaps
+4. only then promote support language

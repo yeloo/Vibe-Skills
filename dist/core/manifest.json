@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "lane_id": "core",
+  "lane_kind": "universal-core",
+  "stability": "preview",
+  "source_release": {
+    "version": "2.3.34",
+    "updated": "2026-03-13"
+  },
+  "summary": "Universal contracts only. No install/check runtime closure is promised by this lane.",
+  "runtime_ownership": {
+    "owner": "none",
+    "notes": "This lane must not claim official runtime ownership. It only provides contracts and schemas for reuse."
+  },
+  "capability_promises": [
+    {
+      "id": "core_contract_docs_exist",
+      "promise_level": "promised",
+      "evidence_paths": [
+        "docs/universalization/core-contract.md"
+      ]
+    },
+    {
+      "id": "router_authority_remains_local",
+      "promise_level": "promised",
+      "evidence_paths": [
+        "docs/universalization/router-model-neutrality.md",
+        "scripts/router/resolve-pack-route.ps1"
+      ]
+    }
+  ],
+  "non_goals": [
+    "one_shot_host_dependency_install",
+    "official_runtime_install_entrypoints",
+    "host_plugin_provisioning",
+    "cross_platform_parity_claims"
+  ],
+  "docs": {
+    "distribution_lanes": "docs/universalization/distribution-lanes.md",
+    "install_matrix": "docs/universalization/install-matrix.md",
+    "platform_install_matrix": "docs/universalization/platform-install-matrix.md",
+    "platform_support_matrix": "docs/universalization/platform-support-matrix.md",
+    "host_capability_matrix": "docs/universalization/host-capability-matrix.md"
+  },
+  "support": {
+    "platform_support": {
+      "truth_source": "docs/universalization/platform-support-matrix.md",
+      "interpretation": "not_applicable"
+    },
+    "host_support": {
+      "truth_source": "docs/universalization/host-capability-matrix.md",
+      "interpretation": "contract_consumer_only"
+    }
+  }
+}
+

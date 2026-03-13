@@ -1,0 +1,49 @@
+{
+  "manifest_kind": "vibeskills-distribution-manifest",
+  "manifest_version": 1,
+  "package_id": "vibeskills-claude-code",
+  "package_name": "VibeSkills for Claude Code (Preview)",
+  "status": "preview",
+  "runtime_role": "host-adapter-preview",
+  "summary": "Claude Code may consume VibeSkills contracts and guidance, but this repository does not currently provide a governed install/check closure lane equivalent to the Codex official runtime.",
+  "truth_sources": [
+    "docs/universalization/host-capability-matrix.md",
+    "docs/universalization/platform-parity-contract.md",
+    "adapters/claude-code/host-profile.json",
+    "adapters/claude-code/platform-windows.json",
+    "adapters/claude-code/platform-linux.json",
+    "adapters/claude-code/platform-macos.json",
+    "README.md"
+  ],
+  "host_adapter_ref": "adapters/claude-code/host-profile.json",
+  "platform_contracts": [
+    "adapters/claude-code/platform-windows.json",
+    "adapters/claude-code/platform-linux.json",
+    "adapters/claude-code/platform-macos.json"
+  ],
+  "install_entrypoints": {
+    "repo_provided": [
+      "config/settings.template.claude.json"
+    ],
+    "host_managed": [
+      "plugin enablement",
+      "hook execution environment",
+      "MCP registration",
+      "provider credentials"
+    ],
+    "notes": [
+      "Template availability is not a governed install lane.",
+      "Do not market this as 'full' or 'authoritative' until replay-backed proof exists."
+    ]
+  },
+  "degrade_states": {
+    "unverified_platform_lane": "not-yet-proven",
+    "missing_plugins": "degraded-but-supported",
+    "missing_provider_credentials": "degraded-but-supported"
+  },
+  "anti_overclaim": [
+    "Preview means proof bundle is incomplete.",
+    "Claude Code is not claimed to be platform-parity with Codex in this repository."
+  ]
+}
+

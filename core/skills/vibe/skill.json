@@ -1,0 +1,18 @@
+{
+  "skill_id": "vibe",
+  "name": "Vibe Code Orchestrator",
+  "version": 1,
+  "summary": "Canonical orchestration entry for graded routing, tool selection, and XL coordination.",
+  "instruction_path": "core/skills/vibe/instruction.md",
+  "compatibility_path": "core/skills/vibe/compatibility.json",
+  "source_of_truth": {
+    "kind": "bundled-skill",
+    "path": "bundled/skills/vibe/SKILL.md"
+  },
+  "tags": [
+    "router",
+    "governance",
+    "orchestration"
+  ]
+}
+

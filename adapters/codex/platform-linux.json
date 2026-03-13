@@ -1,0 +1,23 @@
+{
+  "adapter_id": "codex",
+  "platform": "linux",
+  "status": "supported-with-constraints",
+  "install_surface": [
+    "install.sh",
+    "scripts/bootstrap/one-shot-setup.sh"
+  ],
+  "check_surface": [
+    "check.sh"
+  ],
+  "doctor_surface": [
+    "check.sh",
+    "PowerShell gates when pwsh is available"
+  ],
+  "degrade_cases": {
+    "without_pwsh": "degraded-but-supported"
+  },
+  "notes": [
+    "Linux can approach official closure when pwsh is installed.",
+    "Without pwsh, authoritative freshness/coherence gates may be skipped with warnings."
+  ]
+}
