@@ -2,27 +2,37 @@
 
 # VibeSkills
 
-> The core of this project is standardization. Only with standardization can human intent be described clearly enough, AI work stay stable enough, and long-term maintenance and technical debt remain under control.
+> An AI capability stack that brings upstream projects, hundreds of skills, MCP entry points, plugin surfaces, and governance rules into one runtime.
 
-`VibeSkills` is the public-facing name. `VCO` is the governed runtime behind it.
+`VibeSkills` is the public-facing name. `VCO` is the governed runtime behind it. This is not a single-purpose utility repo. It is an already-integrated AI capability stack with `340` directly callable skills and capability modules, `19` absorbed upstream project and practice sources, and `129` config-backed policies, contracts, and rules that keep skills, MCP, plugins, and workflows inside one governable system.
 
-This project is not about piling on more tools. It is about building a standardized way for humans and AI to work together: standardizing how humans describe needs, and standardizing how AI clarifies, plans, builds, verifies, and records the work so projects can be maintained with lower long-term technical debt.
+## What Is Already Integrated
+
+| Resource Layer | What Is Already Here | What It Means For Users |
+| --- | --- | --- |
+| `340` directly callable skills and capability modules | Covering requirement discovery, planning, coding, debugging, testing, documentation, data work, and research flows | You do not need to assemble a toolchain from scratch just to get work moving |
+| `MCP`, plugins, and workflow entry points | Bring external services, browsers, repositories, documents, and automation flows into the same runtime | One entry point can coordinate many capability surfaces instead of forcing constant context switching |
+| `19` absorbed upstream projects and high-value practice sources | Pull mature methods, structures, and working habits into one governed system | You get a unified operating experience, not a loose bundle of ideas |
+| `129` config-backed policies, contracts, and rules | Cover clarification, planning, verification, traceability, boundaries, cleanup, and rollback | Results are more stable, easier to maintain, and less likely to accumulate technical debt |
+
+## What Work It Can Cover
+
+- requirement discovery, PRDs, task breakdown, and planning orchestration
+- coding, debugging, testing, refactoring, and project generation
+- docs, specs, reports, knowledge capture, and delivery artifacts
+- data analysis, machine learning, research, and experiment workflows
+- GitHub operations, deployment, CI/CD, release management, and quality gates
+- MCP integrations, browser automation, and file, spreadsheet, and document handling
+
+This capability surface did not appear out of nowhere. The project continuously integrates and governs strengths from `superpower`, `claude-scientific-skills`, `get-shit-done`, `aios-core`, `OpenSpec`, `ralph-claude-code`, and `SuperClaude_Framework`, pulling prompt organization, skill accumulation, plan-driven execution, governed workflows, and engineering discipline into one system.
+
+`VibeSkills` is not presenting a static list of tools. It is presenting an already-integrated capability network where skills, MCP, plugins, workflows, policies, and upstream methods can work together inside the same runtime.
+
+This repo does not just collect capabilities. It also absorbs structures and practices that have already been proven in strong upstream projects. The point is not to make people learn more scattered commands. The point is to let people call into an AI work system that already integrates requirement discovery, planning, implementation, verification, and maintenance.
 
 <p align="center">
   <img src="./docs/assets/Gemini_Generated_Image_75f8n575f8n575f8.svg" alt="Original Gemini SVG provided by the author" width="100%" />
 </p>
-
-## Capability Snapshot
-
-| What We Integrated | How It Works In The System | What It Means For Users |
-| --- | --- | --- |
-| `340` directly callable skills and capability modules | Organized by `dual-layer routing`, bringing skills, MCP, plugins, and workflow entry points into one runtime | You do not have to keep jumping between disconnected tools |
-| `19` upstream projects and high-value practice sources absorbed into the system | Unified by the `governed runtime` so strong ideas from different projects work inside one flow | You get a governed system experience, not a loose bundle |
-| `129` config-backed policies, contracts, and rules | Covering `verification and cleanup`, planning, traceability, boundaries, and rollback | Results are more stable, easier to maintain, and less likely to accumulate technical debt |
-
-`VibeSkills` is not presenting a static directory of capabilities. It is presenting an AI system where capability integration, execution discipline, and governance density already live on the same surface.
-
-This project integrates strengths from excellent upstream work such as `superpower`, `claude-scientific-skills`, `get-shit-done`, `aios-core`, `OpenSpec`, `ralph-claude-code`, and `SuperClaude_Framework`. The goal is not to make users memorize more commands. The goal is to let users focus on expressing needs to AI, while the later stages from requirement discovery and task planning to plan-driven implementation, verification, and maintenance can keep landing through a standardized workflow.
 
 ## Why It Feels Different Immediately
 
@@ -43,6 +53,7 @@ It is about integrating calling, governance, verification, and review into a sys
 If you already use AI heavily, you have probably seen some version of these failures:
 
 - too many skills, with no clear answer for which one fits the moment
+- low skill activation rates, where the capability exists in the repo but rarely gets triggered, remembered, or connected to the actual workflow
 - projects, plugins, and workflows that overlap and conflict with one another
 - models that start executing before the task is actually clear
 - work that ends without verification, evidence, or rollback surfaces
@@ -50,6 +61,8 @@ If you already use AI heavily, you have probably seen some version of these fail
 
 `VibeSkills` does not pretend those problems disappear on their own.
 Its value is that it takes them seriously and designs around them.
+
+The `VCO` ecosystem is also trying to solve a very practical problem: not that there are too few skills, but that many skills stay dormant and their real activation rate is too low. Through routing decisions, MCP and plugin entry points, workflow orchestration, and governance rules, the system tries to pull the right capability into the right stage of work instead of leaving it asleep in the repository.
 
 ## How It Works
 
@@ -59,7 +72,7 @@ The easiest way to understand it is as three layers.
 
 In the right situations, you should not have to remember which exact skill to call.
 
-`VibeSkills` combines rule-based routing and AI-assisted routing so the right capability is more likely to be activated in the right context, without forcing you to memorize the ecosystem first.
+`VibeSkills` combines rule-based routing and AI-assisted routing so the right capability is more likely to be activated in the right context, without forcing you to memorize the ecosystem first. Part of what the `VCO` ecosystem is solving is low skill activation rate, so more capabilities can enter the execution path at the right moment instead of remaining technically present but practically unused.
 
 ### 2. Governed workflows
 
@@ -103,7 +116,8 @@ If you are already a heavy user and want fuller install detail:
 - [`docs/install/recommended-full-path.en.md`](./docs/install/recommended-full-path.en.md)
 - [`docs/cold-start-install-paths.en.md`](./docs/cold-start-install-paths.en.md)
 
-## In One Sentence
+## Project Philosophy
 
-`VibeSkills` is not trying to sound more impressive.
-It is trying to turn the most failure-prone part of real AI work into something more callable, more governable, more verifiable, and more maintainable over time.
+The core idea of `VibeSkills` is standardization. Only when requirement clarification, planning, execution, verification, traceability, and rollback are turned into reusable order does human intent become clearer, model execution become steadier, and long-term maintenance keep technical debt lower.
+
+This project is not trying to make AI look more magical. It is trying to let users focus on describing goals while the rest of the work can be carried, verified, and maintained inside a standardized workflow that is more callable, more governable, and more sustainable over time.
