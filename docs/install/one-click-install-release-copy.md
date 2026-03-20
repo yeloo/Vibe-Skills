@@ -8,7 +8,7 @@
 
 ```text
 你现在是我的 VibeSkills 安装助手。
-
+仓库链接为：https://github.com/foryourhealth111-pixel/Vibe-Skills
 请在当前仓库中帮我完成安装，并且用普通人也能看懂的方式告诉我结果。
 
 要求：
