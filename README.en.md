@@ -65,6 +65,9 @@ Traditional Skills repositories answer: *"What tools do I have here?"* VibeSkill
 | **Sleeping skills**: hundreds of capabilities sit in the repo, but in real scenarios the AI does not remember to use them. Activation stays low. | **🧠 Intelligent routing**: the system figures out what to call based on context and logic, so you do not need to memorize a skill catalog. |
 | **Black-box sprinting**: the AI starts building before clarifying requirements. It looks fast, but the direction drifts, and the project slowly turns into a black box. | **🧭 Governed workflow**: the sequence is constrained on purpose. Clarification, verification, and traceability are folded into one unified flow, and every step stays auditable. |
 | **Conflicting components**: plugins and workflows fight each other, pollute the environment, or fall into loops because nobody is coordinating them. | **🧩 Global governance**: 129 contract rules define safety boundaries and rollback mechanisms, protecting the runtime's long-term stability. |
+| Messy Workspaces: AI workspaces often lack standardization. Over time, repositories become cluttered, hindering the next agent from taking over. Re-evaluating the architecture for a new agent leads to missed details and broken handoffs. |Semantic Directory Governance: Employs a standardized file storage architecture. It ensures that any work processed through this system is strictly organized, allowing the AI in subsequent sessions to instantly understand what files belong in which directories 👆. |
+| AI Quirks & Illusions: Deleting primary files by mistake when clearing backups; a bad habit of writing silent fallback mechanisms, then confidently claiming early success while the primary functionality is actually quite poor. | Built-in Guardrails: Includes strict rules, such as prohibiting bulk file deletion via commands (forcing one-by-one deletion to prevent accidents). Silent automated fallbacks are banned; any necessary fallback must trigger an explicit warning to the user 👆. |
+| High Cognitive Load: Users must rely on their own experience to regulate AI workflows, requiring steep learning curves and constant vigilance. | Guided Framework: The system actively guides the user through clarifying requirements, confirming execution plans, locking in workflow documents, and running concurrent multi-agents (allocating tasks and auto-invoking skills based on the plan), down to automated testing and iteration until the task is complete 👆. |
 
 ---
 
@@ -282,7 +285,8 @@ We know that building in isolation cannot keep up with the speed of the AI era. 
 * 🧊 [Cold-start and other environment installation paths](./docs/cold-start-install-paths.md)
 
 ---
-
+Welcome everyone to try it out and experience it for yourselves! I'd love to hear your thoughts, so please feel free to start discussions and share your feedback or suggestions. I know I'm far from perfect, so if you spot any issues or areas for improvement, please don't hesitate to point them out—I'm all ears and will definitely make the necessary fixes.
+If you like the project, please consider giving it a star! I'll be continuously updating it. Your support is the enriched U-235 to this nuclear-powered donkey!
 <div align="center">
   <p><i>Turn the most failure-prone parts of real work into a system that is more callable, more governable, and more maintainable over the long term.</i></p>
 </div>
