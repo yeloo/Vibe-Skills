@@ -1,99 +1,96 @@
 # Manual Copy Install (Offline / No-Admin)
 
-This is the second main path, but it still only supports the same two hosts:
+If you do not want to run the install scripts and only want to place the files manually, remember one thing:
+
+**copy the VibeSkills runtime directories into your target host root.**
+
+This path currently supports only two hosts:
 
 - `codex`
 - `claude-code`
 
-If your target is not one of those two hosts, the current version should be treated as unsupported. Do not describe manual copy as successful host support.
+If your target is not one of those two, the current version should not be described as supported installation.
 
-## What You Get
+## What To Copy
 
-Manual copy gives you the repo-owned runtime payload, not full host-native closure.
-
-That means you get:
+Copy these items into the target host root:
 
 - `skills/`
 - `commands/`
 - `config/upstream-lock.json`
-- `config/skills-lock.json` if present
-- the canonical `skills/vibe/` runtime mirror
+- `config/skills-lock.json` if it exists in the repo
+- the `skills/vibe/` runtime mirror
 
-It does not automatically give you:
+A simple way to think about them:
 
-- host plugin provisioning
-- hook installation
-- MCP registration
-- provider credential wiring
-- automatic updates to Claude Code's real `settings.json`
+- `skills/`: the capabilities themselves
+- `commands/`: command entrypoints
+- `config/*.json`: lock files and release-alignment metadata
+- `skills/vibe/`: the VCO runtime mirror
 
-## Manual Copy Steps
+## Where To Copy Them
 
-Assume your target directory is: `<TARGET_ROOT>`
+Copy them into your target host root.
 
-1. Create the target directory layout
+The target directory should end up containing paths like:
 
-```bash
-mkdir -p <TARGET_ROOT>/skills <TARGET_ROOT>/commands <TARGET_ROOT>/config
-```
+- `<TARGET_ROOT>/skills/`
+- `<TARGET_ROOT>/commands/`
+- `<TARGET_ROOT>/config/upstream-lock.json`
+- `<TARGET_ROOT>/config/skills-lock.json` if present
 
-2. Copy runtime skills
+## What You Still Need To Configure Yourself
 
-```bash
-cp -R ./bundled/skills/. <TARGET_ROOT>/skills/
-```
+Manual copy only places the repo files. It does not finish host-local configuration.
 
-3. Copy commands
+### If you install into Codex
 
-```bash
-cp -R ./commands/. <TARGET_ROOT>/commands/
-```
+You still need to configure locally:
 
-4. Copy lock files
+- `~/.codex/settings.json`
+- commonly `OPENAI_API_KEY` and `OPENAI_BASE_URL` under `env`
 
-```bash
-cp ./config/upstream-lock.json <TARGET_ROOT>/config/upstream-lock.json
-cp ./config/skills-lock.json <TARGET_ROOT>/config/skills-lock.json
-```
+### If you install into Claude Code
 
-If `skills-lock.json` is not present, skip it.
+You still need to configure locally:
 
-## Host-Specific Follow-Up
-
-### Codex
-
-- open `~/.codex/settings.json`
-- add only the fields you need under `env`
-- common examples are `OPENAI_API_KEY` and `OPENAI_BASE_URL`
-- do not paste secrets into chat
-
-### Claude Code
-
-- open `~/.claude/settings.json`
-- add only the fields you need under `env`
-- common examples are:
+- `~/.claude/settings.json`
+- commonly:
   - `VCO_AI_PROVIDER_URL`
   - `VCO_AI_PROVIDER_API_KEY`
   - `VCO_AI_PROVIDER_MODEL`
-- add `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` only when needed for the host connection
-- the current version no longer generates `settings.vibe.preview.json`
-- do not paste secrets into chat
+- and, only if the host connection needs them:
+  - `ANTHROPIC_BASE_URL`
+  - `ANTHROPIC_AUTH_TOKEN`
 
-## Most Important Boundary
+## What This Path Does Not Do Automatically
 
-- this path does not automatically finish online provider configuration
-- this path also does not install hooks for `codex` or `claude-code`; hook installation is frozen because of compatibility issues
-- if `url` / `apikey` / `model` are not configured locally, the environment must not be described as online-ready
-- other agents are not part of the supported surface in the current version
+Manual copy does not automatically complete:
+
+- hook installation
+- MCP registration
+- provider credential wiring
+- edits to Claude Code's real `settings.json`
+
+The important current boundary is:
+
+- `codex` and `claude-code` currently do **not** install hooks
+- hook installation is temporarily frozen because of compatibility issues
+
+## Final Boundary
+
+If `url` / `apikey` / `model` are not configured locally yet, the environment must not be described as online-ready.
+
+Those values should be filled by the user in local host settings or local environment variables, not pasted into chat.
 
 ## When Not To Use This Path
 
-Prefer prompt-based install when:
+Do not use manual copy if you want:
 
-- you want AI to choose the correct supported host for you
-- you want the scripts to run install + check
-- you do not want to manually interpret local configuration instructions
+- AI to choose the correct supported host for you
+- the scripts to run install + check automatically
+- less host-local configuration work
 
-Main entry:
+Use this instead:
 
 - [`one-click-install-release-copy.en.md`](./one-click-install-release-copy.en.md)
