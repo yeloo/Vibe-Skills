@@ -71,6 +71,15 @@ These may still remain host-side or user-side tasks:
 - local `url` / `apikey` / `model` configuration
 - manual updates to Claude Code's real `settings.json`
 
+## How old-version users should upgrade
+
+If you already installed an older version, you usually do not need to uninstall first.
+Update the repo to the newer version, then rerun the install and check flow.
+
+For the full upgrade steps, the version verification command, and the release-tag upgrade path, see:
+
+- [`recommended-full-path.en.md`](./recommended-full-path.en.md)
+
 ## Second Main Install Path
 
 If you do not want AI to run installation, or the environment is offline or has no admin rights, use:
