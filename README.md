@@ -338,7 +338,7 @@ graph LR
 
 - 当前公开支持面：**仅支持 Claude Code 和 Codex**
 - ⚡️ [提示词安装（默认推荐）](./docs/install/one-click-install-release-copy.md)
-  提示词里已明确区分 Codex 基础在线 provider 的 `OPENAI_*` 与治理 AI 在线层的 `VCO_AI_PROVIDER_*`，并要求 AI 说明这些字段分别做什么、为什么要配，以及去哪里本地配置。
+
 - 📁 [手动复制安装（离线 / 无管理员权限）](./docs/install/manual-copy-install.md)
 
 **高级参考**
