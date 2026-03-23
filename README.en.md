@@ -17,7 +17,12 @@
     <a href="https://github.com/foryourhealth111-pixel/Vibe-Skills/pulse">
       <img src="https://img.shields.io/github/last-commit/foryourhealth111-pixel/Vibe-Skills?style=for-the-badge&logo=git-lfs&color=32CD32&label=MOMENTUM" alt="last commit">
     </a>
+    <a href="https://gitcgr.com/foryourhealth111-pixel/Vibe-Skills">
+      <img src="https://gitcgr.com/badge/foryourhealth111-pixel/Vibe-Skills.svg" alt="gitcgr" />
+    </a>
   </p>
+
+
 
   <p align="center">
     <img src="https://komarev.com/ghpvc/?username=vibe-skills-foryourhealth&label=NODES%20ACTIVE&color=0078d7&style=flat-square" alt="Visitors">
@@ -363,17 +368,29 @@ We know that building in isolation cannot keep up with the speed of the AI era. 
 - 📖 [Understand the system architecture and philosophy](./docs/quick-start.md)
 - 📜 [VibeSkills manifesto](./docs/manifesto.md)
 
+**This update**
+* ✨ External installation entry points have been consolidated into two public versions:
+  `Full version + customizable governance`
+  `Core framework only + customizable governance`
+* ⚡️ Installation method changed to "prompt-first".
+  Users first send the installation prompt to AI, which confirms the host, then the version, then maps to the actual profile for installation.
+* 🧭 The old `workflow` lane is still retained, but now mainly serves as a compatibility/transition implementation detail, no longer the main version on the homepage for regular users.
+* 🧩 Custom workflows/skills are no longer recommended to be connected loosely, but should go through the governed integration path, falling under the canonical router's governance scope.
+* 🔄 If you need to update the version later: custom governance placed in `skills/custom/` and `config/custom-workflows.json` can usually be retained; but directly modifying official runtime/official skills/official mcp/rules content may be overwritten during updates.
+
 **Installation and configuration guide**
-
-- Current public support surface: **Claude Code and Codex only**
-- ⚡️ [Prompt-based install (recommended default)](./docs/install/one-click-install-release-copy.en.md)
-
-- 📁 [Manual copy install (offline / no-admin)](./docs/install/manual-copy-install.en.md)
+* Current public support surface: **Claude Code and Codex only**
+* Current public versions: **Full version + customizable governance**, **Core framework only + customizable governance**
+* ⚡️ [Prompt-based install (recommended default)](./docs/install/one-click-install-release-copy.md)
+  This has been organized into an easier-to-scan installation entry: first see version differences, then copy the corresponding prompt, then continue to see custom integration. Now also includes "version update prompt".
+* 🧩 [Custom workflow integration](./docs/install/custom-workflow-onboarding.md)
+  Used to subsequently integrate your own workflows/skills into the canonical router's governance scope, rather than forming a second routing system.
+* 📁 [Manual copy install (offline / no-admin)](./docs/install/manual-copy-install.md)
 
 **Advanced references**
 
-- 🛠 [Advanced host and lane reference](./docs/install/recommended-full-path.en.md)
-- 🧊 [Cold-start and other environment notes](./docs/cold-start-install-paths.en.md)
+- 🛠 [Advanced host / lane reference](./docs/install/recommended-full-path.md)
+- 🧊 [Cold-start and other environment notes](./docs/cold-start-install-paths.md)
 
 Welcome everyone to try it out and experience it for yourselves! I'd love to hear your thoughts, so please feel free to start discussions and share your feedback or suggestions. I know I'm far from perfect, so if you spot any issues or areas for improvement, please don't hesitate to point them out—I'm all ears and will definitely make the necessary fixes.
 
@@ -381,7 +398,9 @@ This project is open source, and contributions from everyone are welcome! Whethe
 
 If you like the project, please consider giving it a star! I'll be continuously updating it. Your support is the enriched U-235 to this nuclear-powered donkey!
 
-## Thanks to everyone on LinuxDo for their support! Welcome to join https://linux.do/ for all kinds of technical exchanges, cutting-edge AI information, and AI experience sharing!
+Thank you for watching!
+
+Thanks to everyone on LinuxDo for their support! Welcome to join https://linux.do/ for all kinds of technical exchanges, cutting-edge AI information, and AI experience sharing!
 
 ---
 
